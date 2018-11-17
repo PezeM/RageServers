@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Runtime.InteropServices.ComTypes;
 using System.Threading.Tasks;
 
 namespace RageServers
@@ -12,7 +14,7 @@ namespace RageServers
 
         public static async Task MainAsync(string[] args)
         {
-            var client = new RageClient(2000);
+            var client = new RageClient(new List<string>(), 2000);
             client.StartGettingInformation();
             Console.ReadKey();
         }
