@@ -4,6 +4,8 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Timers;
+using LiteDB;
+using RageServers.Entity;
 
 namespace RageServers
 {
@@ -11,25 +13,38 @@ namespace RageServers
     {
         private static HttpClient _client = new HttpClient();
         private readonly string mainUrl = "https://cdn.rage.mp/master/";
+        private ServersDatabase _serversDb;
 
         private Timer _timer;
         private double _interval;
-        private int _iteration;
+        private int _iteration = 1;
 
         private IEnumerable<string> _serversToDisplayInformationAbout;
         private bool _displayInformation = true;
 
         public Dictionary<string, ServerInfo> ServerInfos { get; set; }
 
-        public RageClient(IEnumerable<string> serversToDisplayInformationAbout, double interval = 60000, bool displayInformation = true)
+        public RageClient(string connectionString, IEnumerable<string> serversToDisplayInformationAbout, double interval = 60000, bool displayInformation = true)
         {
             _displayInformation = displayInformation;
             _serversToDisplayInformationAbout = serversToDisplayInformationAbout;
+
+            _serversDb = new ServersDatabase(connectionString);
             ServerInfos = new Dictionary<string, ServerInfo>();
 
             _interval = interval;
             _timer = new Timer(_interval);
             _timer.Elapsed += TimerElapsedAsync;
+            DisplayPeakPlayers();
+        }
+
+        private void DisplayPeakPlayers()
+        {
+            var peakPlayers = _serversDb.GetPeakForAllServers();
+            foreach (var server in peakPlayers)
+            {
+                Console.WriteLine($"{server.Key} had maximum {server.Value} players.");
+            }
         }
 
         public void StartGettingInformation()
@@ -68,14 +83,22 @@ namespace RageServers
             try
             {
                 var response = await _client.GetStringAsync(mainUrl);
-                ServerInfos = JsonService.DeserializeRageServerInfos<string, ServerInfo>(response);
+                var servers = JsonService.DeserializeRageServerInfos<string, ServerInfo>(response);
+
                 if (_displayInformation)
-                    DisplayInformations(ServerInfos);
+                    DisplayInformations(servers);
+
+                //InsertToDatabase(servers);
             }
             catch (HttpRequestException e)
             {
                 Console.WriteLine($"EXCEPTION FOUND MESSAGE: {e.Message}");
             }
+        }
+
+        private void InsertToDatabase(Dictionary<string, ServerInfo> servers)
+        {
+            _serversDb.Insert(servers);
         }
     }
 }

@@ -17,12 +17,12 @@ namespace RageServers
         public string Lang { get; set; }
 
         [JsonProperty("players")]
-        public long Players { get; set; }
+        public int Players { get; set; }
 
         [JsonProperty("peak")]
-        public long Peak { get; set; }
+        public int Peak { get; set; }
 
         [JsonProperty("maxplayers")]
-        public long Maxplayers { get; set; }
+        public int Maxplayers { get; set; }
     }
 }
