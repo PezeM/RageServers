@@ -12,15 +12,35 @@ namespace RageServers
         private static HttpClient _client = new HttpClient();
         private readonly string mainUrl = "https://cdn.rage.mp/master/";
         private ServersDatabase _serversDb;
-
         private Timer _timer;
-        private double _interval;
-        public int Iteration { get; private set; } = 1;
 
+        /// <summary>
+        /// List of servers ip to display information about
+        /// </summary>
         public IEnumerable<string> ServersToDisplayInformationAbout { get; private set; }
-        public Dictionary<string, ServerInfo> ServerInfos { get; set; }
+
+        /// <summary>
+        /// If set to true, will display information about every server from current response 
+        /// </summary>
         public bool DisplayInformation { get; private set; }
 
+        /// <summary>
+        /// Number of requests
+        /// </summary>
+        public int Iteration { get; private set; } = 1;
+
+        /// <summary>
+        /// Time interval between requests, in ms
+        /// </summary>
+        public double Interval { get; private set; }
+
+        /// <summary>
+        /// Starting point for application
+        /// </summary>
+        /// <param name="connectionString">Connection string for database.</param>
+        /// <param name="serversToDisplayInformationAbout">List of servers to diplay informations about</param>
+        /// <param name="interval">Time interval between requests</param>
+        /// <param name="displayInformation">Set to true if allowed to display informations about servers</param>
         public RageClient(string connectionString, IEnumerable<string> serversToDisplayInformationAbout,
             double interval = 60000, bool displayInformation = true)
         {
@@ -28,10 +48,9 @@ namespace RageServers
             ServersToDisplayInformationAbout = serversToDisplayInformationAbout;
 
             _serversDb = new ServersDatabase(connectionString);
-            ServerInfos = new Dictionary<string, ServerInfo>();
 
-            _interval = interval;
-            _timer = new Timer(_interval);
+            Interval = interval;
+            _timer = new Timer(Interval);
             _timer.Elapsed += TimerElapsedAsync;
             DisplayPeakPlayers();
         }
@@ -82,7 +101,7 @@ namespace RageServers
                 if (DisplayInformation)
                     DisplayInformations(servers);
 
-                //InsertToDatabase(servers);
+                //AddToDatabase(servers);
             }
             catch (HttpRequestException e)
             {
@@ -90,7 +109,7 @@ namespace RageServers
             }
         }
 
-        private void InsertToDatabase(Dictionary<string, ServerInfo> servers)
+        private void AddToDatabase(Dictionary<string, ServerInfo> servers)
         {
             _serversDb.Insert(servers);
         }
