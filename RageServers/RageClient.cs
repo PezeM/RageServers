@@ -41,10 +41,10 @@ namespace RageServers
         private void DisplayPeakPlayers()
         {
             var peakPlayers = _serversDb.GetPeakForAllServers();
-            foreach (var server in peakPlayers)
-            {
-                Console.WriteLine($"{server.Key} had maximum {server.Value} players.");
-            }
+            //foreach (var server in peakPlayers)
+            //{
+            //    Console.WriteLine($"{server.Key} had maximum {server.Value} players.");
+            //}
         }
 
         public void StartGettingInformation()

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using LiteDB;
 using RageServers.Entity;
@@ -31,7 +32,7 @@ namespace RageServers
             }
         }
 
-        public IEnumerable<ServerEntity> GetAllServerInfo(string ip)
+        public IEnumerable<ServerEntity> GetServerInfo(string ip)
         {
             using (var db = new LiteRepository(_connectionString))
             {
@@ -57,13 +58,21 @@ namespace RageServers
 
         public Dictionary<string, int> GetPeakForAllServers()
         {
+            var timer = new Stopwatch();
+            timer.Start();
+
             var allServers = GetAll();
             var peakDictionary = new Dictionary<string, int>();
             foreach (var serverEntity in allServers)
             {
                 if (!peakDictionary.ContainsKey(serverEntity.IP))
+                {
                     peakDictionary.Add(serverEntity.IP, GetPeakPlayersForServer(serverEntity.IP));
+                }
             }
+
+            timer.Stop();
+            Console.WriteLine($"Time in ms {timer.ElapsedMilliseconds}, ticks {timer.ElapsedTicks}.");
 
             return peakDictionary;
         }
