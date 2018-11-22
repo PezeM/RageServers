@@ -4,8 +4,6 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Timers;
-using LiteDB;
-using RageServers.Entity;
 
 namespace RageServers
 {
@@ -24,7 +22,8 @@ namespace RageServers
 
         public Dictionary<string, ServerInfo> ServerInfos { get; set; }
 
-        public RageClient(string connectionString, IEnumerable<string> serversToDisplayInformationAbout, double interval = 60000, bool displayInformation = true)
+        public RageClient(string connectionString, IEnumerable<string> serversToDisplayInformationAbout,
+            double interval = 60000, bool displayInformation = true)
         {
             _displayInformation = displayInformation;
             _serversToDisplayInformationAbout = serversToDisplayInformationAbout;
