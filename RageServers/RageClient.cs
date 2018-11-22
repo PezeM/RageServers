@@ -15,18 +15,17 @@ namespace RageServers
 
         private Timer _timer;
         private double _interval;
-        private int _iteration = 1;
+        public int Iteration { get; private set; } = 1;
 
-        private IEnumerable<string> _serversToDisplayInformationAbout;
-        private bool _displayInformation = true;
-
+        public IEnumerable<string> ServersToDisplayInformationAbout { get; private set; }
         public Dictionary<string, ServerInfo> ServerInfos { get; set; }
+        public bool DisplayInformation { get; private set; }
 
         public RageClient(string connectionString, IEnumerable<string> serversToDisplayInformationAbout,
             double interval = 60000, bool displayInformation = true)
         {
-            _displayInformation = displayInformation;
-            _serversToDisplayInformationAbout = serversToDisplayInformationAbout;
+            DisplayInformation = displayInformation;
+            ServersToDisplayInformationAbout = serversToDisplayInformationAbout;
 
             _serversDb = new ServersDatabase(connectionString);
             ServerInfos = new Dictionary<string, ServerInfo>();
@@ -48,28 +47,24 @@ namespace RageServers
 
         public void StartGettingInformation()
         {
-            // Return if timer is already enabled
-            if (_timer.Enabled)
-                return;
-
             _timer.Enabled = true;
         }
 
         private async void TimerElapsedAsync(object sender, ElapsedEventArgs e)
         {
             await GetHtmlAsync(mainUrl);
-            _iteration++;
+            Iteration++;
         }
 
         private void DisplayInformations(Dictionary<string, ServerInfo> servers)
         {
-            Console.WriteLine($"===================== Iteration: {_iteration} {DateTime.Now} ============================");
-            // Display informations only about servers with decleared IP inside _serversToDisplayInformationAbout
-            if (_serversToDisplayInformationAbout.Any())
+            Console.WriteLine($"===================== Iteration: {Iteration} {DateTime.Now} ============================");
+            // Display informations only about servers with decleared IP inside ServersToDisplayInformationAbout
+            if (ServersToDisplayInformationAbout.Any())
             {
                 foreach (var server in servers)
                 {
-                    if (_serversToDisplayInformationAbout.Contains(server.Key))
+                    if (ServersToDisplayInformationAbout.Contains(server.Key))
                     {
                         Console.WriteLine($"Server name: {server.Value.Name} has {server.Value.Players} players. With peak {server.Value.Peak}.");
                     }
@@ -84,7 +79,7 @@ namespace RageServers
                 var response = await _client.GetStringAsync(mainUrl);
                 var servers = JsonService.DeserializeRageServerInfos<string, ServerInfo>(response);
 
-                if (_displayInformation)
+                if (DisplayInformation)
                     DisplayInformations(servers);
 
                 //InsertToDatabase(servers);
