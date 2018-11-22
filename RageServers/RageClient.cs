@@ -52,16 +52,15 @@ namespace RageServers
             Interval = interval;
             _timer = new Timer(Interval);
             _timer.Elapsed += TimerElapsedAsync;
-            DisplayPeakPlayers();
         }
 
         private void DisplayPeakPlayers()
         {
             var peakPlayers = _serversDb.GetPeakForAllServers();
-            //foreach (var server in peakPlayers)
-            //{
-            //    Console.WriteLine($"{server.Key} had maximum {server.Value} players.");
-            //}
+            foreach (var server in peakPlayers)
+            {
+                Console.WriteLine($"{server.Key} had maximum {server.Value} players.");
+            }
         }
 
         public void StartGettingInformation()
@@ -101,7 +100,7 @@ namespace RageServers
                 if (DisplayInformation)
                     DisplayInformations(servers);
 
-                //AddToDatabase(servers);
+                AddToDatabase(servers);
             }
             catch (HttpRequestException e)
             {

@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using RageServers.Models;
@@ -25,11 +25,13 @@ namespace RageServers
 
             Configuration = builder.Build();
 
+            GetAppSettings();
+
             var client = new RageClient(AppSettings.ConnectionString
-                , new List<string> { "51.136.12.2:22005", "37.59.35.134:22005", "51.68.154.84:22005" }
+                , AppSettings.Configuration.ServersToDisplayInformationAbout
                 , AppSettings.Configuration.Interval
-                , displayInformation: false);
-            // client.StartGettingInformation();
+                , AppSettings.Configuration.DisplayInformation);
+            client.StartGettingInformation();
 
             Console.ReadKey();
         }
@@ -38,6 +40,10 @@ namespace RageServers
         {
             AppSettings.ConnectionString = Configuration.GetSection("ConnectionStrings").GetSection("LiteDb").Value;
             AppSettings.Configuration.Interval = Int32.Parse(Configuration.GetSection("Configuration").GetSection("Interval").Value);
+            AppSettings.Configuration.DisplayInformation = Convert.ToBoolean(Configuration.GetSection("Configuration").GetSection("DisplayInformation").Value);
+
+            AppSettings.Configuration.ServersToDisplayInformationAbout = Configuration.GetSection("Configuration")
+                .GetSection("ServersToDisplayInformationAbout").GetChildren().Select(x => x.Value).ToList();
         }
     }
 }
