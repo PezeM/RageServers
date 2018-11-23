@@ -1,4 +1,4 @@
-﻿namespace RageServers
+﻿namespace RageServers.Models
 {
     public enum Lang
     {
