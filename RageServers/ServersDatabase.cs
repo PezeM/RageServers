@@ -32,6 +32,36 @@ namespace RageServers
             }
         }
 
+        public void Delete(ServerEntity server)
+        {
+            using (var db = new LiteRepository(_connectionString))
+            {
+                db.Delete<ServerEntity>(server.Id);
+            }
+        }
+
+        public void Delete(Dictionary<string, ServerEntity> servers)
+        {
+            using (var db = new LiteRepository(_connectionString))
+            {
+                foreach (var server in servers)
+                {
+                    db.Delete<Dictionary<string, ServerEntity>>(server.Value.Id);
+                }
+            }
+        }
+
+        public void DeleteMultiple(IEnumerable<ServerEntity> servers)
+        {
+            using (var db = new LiteRepository(_connectionString))
+            {
+                foreach (var server in servers)
+                {
+                    db.Delete<ServerEntity>(server.Id);
+                }
+            }
+        }
+
         public IEnumerable<ServerEntity> GetServerInfo(string ip)
         {
             using (var db = new LiteRepository(_connectionString))
@@ -56,6 +86,15 @@ namespace RageServers
             }
         }
 
+        public int GetPeakPlayersForServerInDateRange(string ip, DateTime startTime, DateTime endTime)
+        {
+            using (var db = new LiteRepository(_connectionString))
+            {
+                return db.Query<ServerEntity>().Where(q => q.Datetime > startTime && q.Datetime < endTime && q.IP == ip)
+                    .ToEnumerable().Max(q => q.ServerInfo.Peak);
+            }
+        }
+
         public Dictionary<string, int> GetPeakForAllServers()
         {
             var timer = new Stopwatch();
@@ -77,4 +116,6 @@ namespace RageServers
             return peakDictionary;
         }
     }
+
+
 }

@@ -10,7 +10,7 @@ namespace RageServers
     class Program
     {
         public static IConfiguration Configuration { get; set; }
-        public static AppSettings AppSettings { get; set; }
+        public static AppSettings AppSettings { get; set; } = new AppSettings();
 
         public static void Main(string[] args)
         {
@@ -24,7 +24,7 @@ namespace RageServers
                 .AddJsonFile("appsettings.json");
 
             Configuration = builder.Build();
-
+            AppSettings.Configuration = new Configuration();
             GetAppSettings();
 
             var client = new RageClient(AppSettings.ConnectionString
