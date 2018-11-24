@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -49,9 +50,21 @@ namespace RageServers
 
             _serversDb = new ServersDatabase(connectionString);
 
+
             Interval = interval;
             _timer = new Timer(Interval);
             _timer.Elapsed += TimerElapsedAsync;
+            ShowPeakPlayers();
+        }
+
+        private void ShowPeakPlayers()
+        {
+            var timer = new Stopwatch();
+            timer.Start();
+            var peak = _serversDb.GetPeakPlayersForServerInDateRange2("51.68.154.84:22005", new DateTime(2018, 11, 22),
+                new DateTime(2018, 11, 23));
+            timer.Stop();
+            Console.WriteLine($"Time in ms {timer.ElapsedMilliseconds}, ticks {timer.ElapsedTicks}.");
         }
 
         private void DisplayPeakPlayers()

@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using LiteDB;
 using RageServers.Entity;
+using RageServers.Exceptions;
 
 namespace RageServers
 {
@@ -14,6 +16,35 @@ namespace RageServers
         public ServersDatabase(string connectionString)
         {
             _connectionString = connectionString;
+            InitializeDatabase();
+
+        }
+
+        private void InitializeDatabase()
+        {
+            if (!_connectionString.Contains("Filename="))
+            {
+                throw new WrongDatabasePathException(_connectionString);
+            }
+
+            var databasePath = _connectionString.Remove(_connectionString.IndexOf("Filename="), "Filename=".Length);
+            if (!File.Exists(databasePath))
+            {
+                CreateIndexes();
+            }
+        }
+
+        /// <summary>
+        /// Method for ensuring indexes at startup
+        /// </summary>
+        private void CreateIndexes()
+        {
+            using (var db = new LiteDatabase(_connectionString))
+            {
+                var collection = db.GetCollection<ServerEntity>();
+                collection.EnsureIndex(x => x.IP);
+                collection.EnsureIndex(x => x.Datetime);
+            }
         }
 
         public void Insert(Dictionary<string, ServerInfo> servers)
@@ -90,7 +121,16 @@ namespace RageServers
         {
             using (var db = new LiteRepository(_connectionString))
             {
-                return db.Query<ServerEntity>().Where(q => q.Datetime > startTime && q.Datetime < endTime && q.IP == ip)
+                return db.Query<ServerEntity>().Where(q => q.IP == ip).ToEnumerable()
+                    .Where(q => q.Datetime > startTime && q.Datetime < endTime).Max(q => q.ServerInfo.Peak);
+            }
+        }
+
+        public int GetPeakPlayersForServerInDateRange2(string ip, DateTime startTime, DateTime endTime)
+        {
+            using (var db = new LiteRepository(_connectionString))
+            {
+                return db.Query<ServerEntity>().Where(q => q.IP == ip && q.Datetime > startTime && q.Datetime < endTime)
                     .ToEnumerable().Max(q => q.ServerInfo.Peak);
             }
         }
