@@ -131,8 +131,16 @@ namespace RageServers
         {
             using (var db = new LiteRepository(_connectionString))
             {
-                return db.Query<ServerEntity>().Where(q => q.IP == ip && q.Datetime > startTime && q.Datetime < endTime)
-                    .ToEnumerable().Max(q => q.ServerInfo.Peak);
+                try
+                {
+                    return db.Query<ServerEntity>().Where(q => q.IP == ip && q.Datetime > startTime && q.Datetime < endTime)
+                        .ToEnumerable().Max(q => q.ServerInfo.Peak);
+                }
+                catch (InvalidOperationException e)
+                {
+                    Console.WriteLine($"No records found in given timerange! \n {e}");
+                    return 0;
+                }
             }
         }
 
