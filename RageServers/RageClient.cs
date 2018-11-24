@@ -55,14 +55,15 @@ namespace RageServers
             _timer = new Timer(Interval);
             _timer.Elapsed += TimerElapsedAsync;
             ShowPeakPlayers();
+            DisplayPeakPlayers();
+
         }
 
         private void ShowPeakPlayers()
         {
             var timer = new Stopwatch();
             timer.Start();
-            var peak = _serversDb.GetPeakPlayersForServerInDateRange2("51.68.154.84:22005", new DateTime(2018, 11, 22),
-                new DateTime(2018, 11, 23));
+            var peak = _serversDb.GetPeakPlayersForServerInDateRange2("51.68.154.84:22005", new DateTime(2018, 11, 23), DateTime.Now);
             timer.Stop();
             Console.WriteLine($"Time in ms {timer.ElapsedMilliseconds}, ticks {timer.ElapsedTicks}.");
         }
@@ -70,10 +71,10 @@ namespace RageServers
         private void DisplayPeakPlayers()
         {
             var peakPlayers = _serversDb.GetPeakForAllServers();
-            foreach (var server in peakPlayers)
-            {
-                Console.WriteLine($"{server.Key} had maximum {server.Value} players.");
-            }
+            //foreach (var server in peakPlayers)
+            //{
+            //    Console.WriteLine($"{server.Key} had maximum {server.Value} players.");
+            //}
         }
 
         public void StartGettingInformation()

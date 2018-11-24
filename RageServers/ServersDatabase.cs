@@ -22,12 +22,14 @@ namespace RageServers
 
         private void InitializeDatabase()
         {
+            // Throws exeption if there is no Filename argument in the connection string
             if (!_connectionString.Contains("Filename="))
             {
                 throw new WrongDatabasePathException(_connectionString);
             }
 
             var databasePath = _connectionString.Remove(_connectionString.IndexOf("Filename="), "Filename=".Length);
+            // Create new database with indexes if there is none
             if (!File.Exists(databasePath))
             {
                 CreateIndexes();
