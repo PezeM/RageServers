@@ -61,11 +61,7 @@ namespace RageServers
 
         private void ShowPeakPlayers()
         {
-            var timer = new Stopwatch();
-            timer.Start();
             var peak = _serversDb.GetPeakPlayersForServerInDateRange2("51.68.154.84:22005", new DateTime(2018, 11, 23), DateTime.Now);
-            timer.Stop();
-            Console.WriteLine($"Time in ms {timer.ElapsedMilliseconds}, ticks {timer.ElapsedTicks}.");
         }
 
         private void DisplayPeakPlayers()

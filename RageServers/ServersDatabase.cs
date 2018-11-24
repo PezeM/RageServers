@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using LiteDB;
@@ -139,9 +138,6 @@ namespace RageServers
 
         public Dictionary<string, int> GetPeakForAllServers()
         {
-            var timer = new Stopwatch();
-            timer.Start();
-
             var allServers = GetAll();
             var peakDictionary = new Dictionary<string, int>();
             foreach (var serverEntity in allServers)
@@ -151,9 +147,6 @@ namespace RageServers
                     peakDictionary.Add(serverEntity.IP, GetPeakPlayersForServer(serverEntity.IP));
                 }
             }
-
-            timer.Stop();
-            Console.WriteLine($"Time in ms {timer.ElapsedMilliseconds}, ticks {timer.ElapsedTicks}.");
 
             return peakDictionary;
         }
