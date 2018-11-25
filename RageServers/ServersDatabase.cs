@@ -122,15 +122,6 @@ namespace RageServers
         {
             using (var db = new LiteRepository(_connectionString))
             {
-                return db.Query<ServerEntity>().Where(q => q.IP == ip).ToEnumerable()
-                    .Where(q => q.Datetime > startTime && q.Datetime < endTime).Max(q => q.ServerInfo.Peak);
-            }
-        }
-
-        public int GetPeakPlayersForServerInDateRange2(string ip, DateTime startTime, DateTime endTime)
-        {
-            using (var db = new LiteRepository(_connectionString))
-            {
                 try
                 {
                     return db.Query<ServerEntity>().Where(q => q.IP == ip && q.Datetime > startTime && q.Datetime < endTime)

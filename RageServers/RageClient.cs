@@ -61,12 +61,20 @@ namespace RageServers
 
         private void ShowPeakPlayers()
         {
-            var peak = _serversDb.GetPeakPlayersForServerInDateRange2("51.68.154.84:22005", new DateTime(2018, 11, 22), new DateTime(2001, 2, 4));
+            var timer = new Stopwatch();
+            timer.Start();
+            var peak = _serversDb.GetPeakPlayersForServerInDateRange("51.68.154.84:22005", new DateTime(2018, 11, 22), DateTime.Now);
+            timer.Stop();
+            Console.WriteLine($"ShowPeakPlayers completed in {timer.ElapsedMilliseconds} ms, {timer.Elapsed}");
         }
 
         private void DisplayPeakPlayers()
         {
+            var timer = new Stopwatch();
+            timer.Start();
             var peakPlayers = _serversDb.GetPeakForAllServers();
+            timer.Stop();
+            Console.WriteLine($"DisplayPeakPlayers completed in {timer.ElapsedMilliseconds} ms, {timer.Elapsed}");
             //foreach (var server in peakPlayers)
             //{
             //    Console.WriteLine($"{server.Key} had maximum {server.Value} players.");
