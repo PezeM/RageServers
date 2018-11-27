@@ -81,7 +81,7 @@ namespace RageServers
             //}
         }
 
-        public void StartGettingInformation()
+        public async Task StartGettingInformationAsync()
         {
             _timer.Enabled = true;
         }
