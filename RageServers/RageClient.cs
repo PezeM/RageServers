@@ -59,6 +59,16 @@ namespace RageServers
             _timer = new Timer(Interval);
             _timer.Elapsed += TimerElapsedAsync;
             // GetAllServersAsync();
+            GetPeakPlayersForServer("51.68.154.84:22005");
+        }
+
+        private void GetPeakPlayersForServer(string id)
+        {
+            var timer = new Stopwatch();
+            timer.Start();
+            var peak = _ravenRage.GetPeakPlayersForServer(id);
+            timer.Stop();
+            _logger.LogInformation($"GetPeakPlayersForServer for {id} completed in {timer.Elapsed} s. Returned {peak} players.");
         }
 
         public async Task GetAllServersAsync()

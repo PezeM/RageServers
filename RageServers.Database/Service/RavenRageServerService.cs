@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using RageServers.Database.Indexes;
 using RageServers.Entity;
@@ -68,6 +69,17 @@ namespace RageServers.Database.Service
             using (var session = _store.OpenAsyncSession())
             {
                 return await session.Advanced.AsyncDocumentQuery<ServerEntity, ServerEntity_ByIP>().ToListAsync();
+            }
+        }
+
+        public int GetPeakPlayersForServer(string ip)
+        {
+            using (var session = _store.OpenSession())
+            {
+                return session.Query<ServerEntity>().Where(q => q.IP == ip).ToList().Max(q => q.ServerInfo.Peak);
+
+                //return session.Query<ServerEntity>().Where(q => q.IP == ip).OrderBy(q => q.ServerInfo.Peak).Take(1)
+                //    .Select(q => q.ServerInfo.Peak).FirstOrDefault();
             }
         }
     }

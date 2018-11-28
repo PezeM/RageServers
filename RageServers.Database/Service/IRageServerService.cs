@@ -11,5 +11,6 @@ namespace RageServers.Database.Service
         Task<ServerEntity> GetServerEntityAsync(string id);
         Task<IList<ServerEntity>> GetServerEntitiesByIpAsync(string ip);
         Task<IEnumerable<ServerEntity>> GetAllServersAsync();
+        int GetPeakPlayersForServer(string ip);
     }
 }
