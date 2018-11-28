@@ -19,6 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\RageServers.Database\RageServers.Database.csproj" />
     <ProjectReference Include="..\RageServers.Models\RageServers.Models.csproj" />
   </ItemGroup>
 

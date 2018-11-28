@@ -61,7 +61,7 @@ namespace RageServers
             // GetAllServersAsync();
         }
 
-        private async Task GetAllServersAsync()
+        public async Task GetAllServersAsync()
         {
             var timer = new Stopwatch();
             timer.Start();
