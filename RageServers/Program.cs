@@ -31,8 +31,6 @@ namespace RageServers
 
             // entry to run app
             await serviceProvider.GetService<App>().RunAsync();
-
-            Console.ReadKey();
         }
 
         private static void ConfigureServices(IServiceCollection services)
@@ -53,38 +51,10 @@ namespace RageServers
             // Configure services
             services.AddSingleton<IDocumentStoreHolder, DocumentStoreHolder>();
             services.AddTransient<RavenRageServerService, RavenRageServerService>();
+            services.AddSingleton<RageClient, RageClient>();
 
             // add app
             services.AddTransient<App>();
         }
-
-        //public static async Task MainAsync2(string[] args)
-        //{
-        //    var builder = new ConfigurationBuilder()
-        //        .SetBasePath(Directory.GetCurrentDirectory())
-        //        .AddJsonFile("appsettings.json");
-
-        //    Configuration = builder.Build();
-        //    AppSettings.Configuration = new Configuration();
-        //    GetAppSettings();
-
-        //    var client = new RageClient(AppSettings.ConnectionString
-        //        , AppSettings.Configuration.ServersToDisplayInformationAbout
-        //        , AppSettings.Configuration.Interval
-        //        , AppSettings.Configuration.DisplayInformation);
-        //    client.StartGettingInformation();
-
-        //    Console.ReadKey();
-        //}
-
-        //private static void GetAppSettings()
-        //{
-        //    AppSettings.ConnectionString = Configuration.GetSection("ConnectionStrings").GetSection("LiteDb").Value;
-        //    AppSettings.Configuration.Interval = Int32.Parse(Configuration.GetSection("Configuration").GetSection("Interval").Value);
-        //    AppSettings.Configuration.DisplayInformation = Convert.ToBoolean(Configuration.GetSection("Configuration").GetSection("DisplayInformation").Value);
-
-        //    AppSettings.Configuration.ServersToDisplayInformationAbout = Configuration.GetSection("Configuration")
-        //        .GetSection("ServersToDisplayInformationAbout").GetChildren().Select(x => x.Value).ToList();
-        //}
     }
 }

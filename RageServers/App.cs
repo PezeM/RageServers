@@ -12,22 +12,20 @@ namespace RageServers
         private readonly ILogger<App> _logger;
         private readonly AppSettings _appSettings;
         private RavenRageServerService _ravenRageServerService;
+        private RageClient _rageClient;
 
-        public App(IOptions<AppSettings> appSettings, ILogger<App> logger, RavenRageServerService ravenRageServerService)
+        public App(IOptions<AppSettings> appSettings, ILogger<App> logger, RavenRageServerService ravenRageServerService, RageClient rageClient)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _appSettings = appSettings?.Value ?? throw new ArgumentNullException(nameof(appSettings));
             _ravenRageServerService = ravenRageServerService;
+            _rageClient = rageClient;
         }
 
         public async Task RunAsync()
         {
             _logger.LogInformation("Program started.");
-            var client = new RageClient(_ravenRageServerService,
-                _appSettings.Configuration.ServersToDisplayInformationAbout,
-                _appSettings.Configuration.Interval,
-                _appSettings.Configuration.DisplayInformation);
-            client.StartGettingInformation();
+            _rageClient.StartGettingInformation();
             Console.ReadKey();
         }
     }

@@ -5,14 +5,21 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Timers;
+using Microsoft.Extensions.Logging;
+using RageServers.Models;
+using Microsoft.Extensions.Options;
 
 namespace RageServers
 {
+    /// <summary>
+    /// Entry point in application
+    /// </summary>
     public class RageClient
     {
         private static HttpClient _client = new HttpClient();
         private readonly string mainUrl = "https://cdn.rage.mp/master/";
-        private readonly RavenRageServerService _ravenRage;
+        private RavenRageServerService _ravenRage;
+        private readonly ILogger<RageClient> _logger;
         private Timer _timer;
 
         /// <summary>
@@ -36,20 +43,18 @@ namespace RageServers
         public double Interval { get; private set; }
 
         /// <summary>
-        /// Starting point for application
+        /// Starting point in application
         /// </summary>
-        /// <param name="connectionString">Connection string for database.</param>
-        /// <param name="serversToDisplayInformationAbout">List of servers to diplay informations about</param>
-        /// <param name="interval">Time interval between requests</param>
-        /// <param name="displayInformation">Set to true if allowed to display informations about servers</param>
-        public RageClient(RavenRageServerService ravenRage, IEnumerable<string> serversToDisplayInformationAbout,
-            double interval = 60000, bool displayInformation = true)
+        /// <param name="ravenRage">Raven database service.</param>
+        public RageClient(RavenRageServerService ravenRage, IOptions<AppSettings> appSettings, ILogger<RageClient> logger)
         {
-            DisplayInformation = displayInformation;
-            ServersToDisplayInformationAbout = serversToDisplayInformationAbout;
+            _logger = logger;
             _ravenRage = ravenRage;
+            var clientSettings = appSettings.Value.Configuration;
+            DisplayInformation = clientSettings.DisplayInformation;
+            ServersToDisplayInformationAbout = clientSettings.ServersToDisplayInformationAbout;
 
-            Interval = interval;
+            Interval = clientSettings.Interval;
             _timer = new Timer(Interval);
             _timer.Elapsed += TimerElapsedAsync;
             //ShowPeakPlayers();
@@ -80,6 +85,7 @@ namespace RageServers
 
         public void StartGettingInformation()
         {
+            _logger.LogInformation("RageClient started getting information.");
             _timer.Enabled = true;
         }
 
@@ -109,7 +115,7 @@ namespace RageServers
         {
             try
             {
-                var response = await _client.GetStringAsync(mainUrl);
+                var response = await _client.GetStringAsync(url);
                 var servers = JsonService.DeserializeRageServerInfos<string, ServerInfo>(response);
 
                 if (DisplayInformation)
@@ -119,7 +125,7 @@ namespace RageServers
             }
             catch (HttpRequestException e)
             {
-                Console.WriteLine($"EXCEPTION FOUND MESSAGE: {e.Message}");
+                _logger.LogError($"HttpRequestException: {e.Message}");
             }
         }
 
@@ -129,6 +135,7 @@ namespace RageServers
             {
                 await _ravenRage.InsertAsync(serverInfo.Key, serverInfo.Value);
             }
+            _logger.LogInformation($"RageClient finished adding {servers.Count} entities to database.");
         }
     }
 }
