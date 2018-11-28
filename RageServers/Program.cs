@@ -5,6 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using RageServers.Database;
+using RageServers.Database.Service;
 using RageServers.Models;
 
 namespace RageServers
@@ -51,6 +52,7 @@ namespace RageServers
 
             // Configure services
             services.AddSingleton<IDocumentStoreHolder, DocumentStoreHolder>();
+            services.AddTransient<RavenRageServerService, RavenRageServerService>();
 
             // add app
             services.AddTransient<App>();
@@ -70,7 +72,7 @@ namespace RageServers
         //        , AppSettings.Configuration.ServersToDisplayInformationAbout
         //        , AppSettings.Configuration.Interval
         //        , AppSettings.Configuration.DisplayInformation);
-        //    client.StartGettingInformationAsync();
+        //    client.StartGettingInformation();
 
         //    Console.ReadKey();
         //}

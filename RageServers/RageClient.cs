@@ -1,6 +1,6 @@
-﻿using System;
+﻿using RageServers.Database.Service;
+using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -12,7 +12,7 @@ namespace RageServers
     {
         private static HttpClient _client = new HttpClient();
         private readonly string mainUrl = "https://cdn.rage.mp/master/";
-        private ServersDatabase _serversDb;
+        private readonly RavenRageServerService _ravenRage;
         private Timer _timer;
 
         /// <summary>
@@ -42,46 +42,43 @@ namespace RageServers
         /// <param name="serversToDisplayInformationAbout">List of servers to diplay informations about</param>
         /// <param name="interval">Time interval between requests</param>
         /// <param name="displayInformation">Set to true if allowed to display informations about servers</param>
-        public RageClient(string connectionString, IEnumerable<string> serversToDisplayInformationAbout,
+        public RageClient(RavenRageServerService ravenRage, IEnumerable<string> serversToDisplayInformationAbout,
             double interval = 60000, bool displayInformation = true)
         {
             DisplayInformation = displayInformation;
             ServersToDisplayInformationAbout = serversToDisplayInformationAbout;
-
-            _serversDb = new ServersDatabase(connectionString);
-
+            _ravenRage = ravenRage;
 
             Interval = interval;
             _timer = new Timer(Interval);
             _timer.Elapsed += TimerElapsedAsync;
-            ShowPeakPlayers();
-            DisplayPeakPlayers();
-
+            //ShowPeakPlayers();
+            //DisplayPeakPlayers();
         }
 
-        private void ShowPeakPlayers()
-        {
-            var timer = new Stopwatch();
-            timer.Start();
-            var peak = _serversDb.GetPeakPlayersForServerInDateRange("51.68.154.84:22005", new DateTime(2018, 11, 22), DateTime.Now);
-            timer.Stop();
-            Console.WriteLine($"ShowPeakPlayers completed in {timer.ElapsedMilliseconds} ms, {timer.Elapsed}");
-        }
+        //private void ShowPeakPlayers()
+        //{
+        //    var timer = new Stopwatch();
+        //    timer.Start();
+        //    var peak = _serversDb.GetPeakPlayersForServerInDateRange("51.68.154.84:22005", new DateTime(2018, 11, 22), DateTime.Now);
+        //    timer.Stop();
+        //    Console.WriteLine($"ShowPeakPlayers completed in {timer.ElapsedMilliseconds} ms, {timer.Elapsed}");
+        //}
 
-        private void DisplayPeakPlayers()
-        {
-            var timer = new Stopwatch();
-            timer.Start();
-            var peakPlayers = _serversDb.GetPeakForAllServers();
-            timer.Stop();
-            Console.WriteLine($"DisplayPeakPlayers completed in {timer.ElapsedMilliseconds} ms, {timer.Elapsed}");
-            //foreach (var server in peakPlayers)
-            //{
-            //    Console.WriteLine($"{server.Key} had maximum {server.Value} players.");
-            //}
-        }
+        //private void DisplayPeakPlayers()
+        //{
+        //    var timer = new Stopwatch();
+        //    timer.Start();
+        //    var peakPlayers = _serversDb.GetPeakForAllServers();
+        //    timer.Stop();
+        //    Console.WriteLine($"DisplayPeakPlayers completed in {timer.ElapsedMilliseconds} ms, {timer.Elapsed}");
+        //    //foreach (var server in peakPlayers)
+        //    //{
+        //    //    Console.WriteLine($"{server.Key} had maximum {server.Value} players.");
+        //    //}
+        //}
 
-        public async Task StartGettingInformationAsync()
+        public void StartGettingInformation()
         {
             _timer.Enabled = true;
         }
@@ -118,7 +115,7 @@ namespace RageServers
                 if (DisplayInformation)
                     DisplayInformations(servers);
 
-                AddToDatabase(servers);
+                await AddToDatabaseAsync(servers);
             }
             catch (HttpRequestException e)
             {
@@ -126,9 +123,12 @@ namespace RageServers
             }
         }
 
-        private void AddToDatabase(Dictionary<string, ServerInfo> servers)
+        private async Task AddToDatabaseAsync(Dictionary<string, ServerInfo> servers)
         {
-            _serversDb.Insert(servers);
+            foreach (var serverInfo in servers)
+            {
+                await _ravenRage.InsertAsync(serverInfo.Key, serverInfo.Value);
+            }
         }
     }
 }

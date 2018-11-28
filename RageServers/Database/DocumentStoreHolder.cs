@@ -1,7 +1,14 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using System;
+using System.Data.Common;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using RageServers.Database.Indexes;
 using RageServers.Models;
 using Raven.Client.Documents;
+using Raven.Client.Documents.Indexes;
+using Raven.Client.Documents.Operations;
+using Raven.Client.Exceptions;
+using Raven.Client.Exceptions.Database;
 using Raven.Client.ServerWide;
 using Raven.Client.ServerWide.Operations;
 
@@ -12,43 +19,51 @@ namespace RageServers.Database
         public IDocumentStore Store { get; }
         private readonly ILogger<DocumentStoreHolder> _logger;
 
-        public DocumentStoreHolder(IOptions<RavenSettings> ravenSettings, ILogger<DocumentStoreHolder> logger)
+        public DocumentStoreHolder(IOptions<AppSettings> appSettings, ILogger<DocumentStoreHolder> logger)
         {
             _logger = logger;
-            var settings = ravenSettings.Value;
+            var ravenSettings = appSettings.Value.RavenSettings;
 
             Store = new DocumentStore()
             {
-                Urls = new[] { settings.Url },
-                Database = settings.Database
+                Urls = new[] { ravenSettings.Url },
+                Database = ravenSettings.Database
             };
 
             Store.Initialize();
 
-            _logger.LogInformation($"Initialized RavenDB document store for {settings.Database} at {settings.Url}");
+            _logger.LogInformation($"Initialized RavenDB document store for {ravenSettings.Database} at {ravenSettings.Url}");
 
             // Create if not exists
             CreateDatabaseIfNotExists();
+
+            IndexCreation.CreateIndexes(
+                typeof(ServerEntity_ByIP).Assembly, Store);
         }
 
         private void CreateDatabaseIfNotExists()
         {
             var database = Store.Database;
-            var dbRecord = Store.Maintenance.Server.Send(new GetDatabaseRecordOperation(database));
 
-            if (dbRecord == null)
+            if (string.IsNullOrWhiteSpace(database))
+                throw new ArgumentException("Value cannot be null or whitespace.", nameof(database));
+
+            try
             {
-                this._logger.LogInformation("RavenDB database does not exist, creating and seeding with initial data");
-
-                // Create database
-                dbRecord = new DatabaseRecordWithEtag();
-
-                var createResult = Store.Maintenance.Server.Send(new CreateDatabaseOperation(dbRecord));
-
-
-                _logger.LogInformation($"Created database and created dbRecord: {dbRecord}.");
+                Store.Maintenance.ForDatabase(database).Send(new GetStatisticsOperation());
             }
+            catch (DatabaseDoesNotExistException)
+            {
+                try
+                {
+                    Store.Maintenance.Server.Send(new CreateDatabaseOperation(new DatabaseRecord(database)));
+                }
+                catch (ConcurrencyException)
+                {
+                    // The database was already created before calling CreateDatabaseOperation
+                }
 
+            }
         }
     }
 }
