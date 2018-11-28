@@ -10,5 +10,6 @@ namespace RageServers.Database.Service
         Task<bool> DeleteServerEntityAsync(string id);
         Task<ServerEntity> GetServerEntityAsync(string id);
         Task<IList<ServerEntity>> GetServerEntitiesByIpAsync(string ip);
+        Task<IEnumerable<ServerEntity>> GetAllServersAsync();
     }
 }

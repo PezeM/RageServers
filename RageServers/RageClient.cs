@@ -1,6 +1,7 @@
 ﻿using RageServers.Database.Service;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -57,31 +58,17 @@ namespace RageServers
             Interval = clientSettings.Interval;
             _timer = new Timer(Interval);
             _timer.Elapsed += TimerElapsedAsync;
-            //ShowPeakPlayers();
-            //DisplayPeakPlayers();
+            // GetAllServersAsync();
         }
 
-        //private void ShowPeakPlayers()
-        //{
-        //    var timer = new Stopwatch();
-        //    timer.Start();
-        //    var peak = _serversDb.GetPeakPlayersForServerInDateRange("51.68.154.84:22005", new DateTime(2018, 11, 22), DateTime.Now);
-        //    timer.Stop();
-        //    Console.WriteLine($"ShowPeakPlayers completed in {timer.ElapsedMilliseconds} ms, {timer.Elapsed}");
-        //}
-
-        //private void DisplayPeakPlayers()
-        //{
-        //    var timer = new Stopwatch();
-        //    timer.Start();
-        //    var peakPlayers = _serversDb.GetPeakForAllServers();
-        //    timer.Stop();
-        //    Console.WriteLine($"DisplayPeakPlayers completed in {timer.ElapsedMilliseconds} ms, {timer.Elapsed}");
-        //    //foreach (var server in peakPlayers)
-        //    //{
-        //    //    Console.WriteLine($"{server.Key} had maximum {server.Value} players.");
-        //    //}
-        //}
+        private async Task GetAllServersAsync()
+        {
+            var timer = new Stopwatch();
+            timer.Start();
+            await _ravenRage.GetAllServersAsync();
+            timer.Stop();
+            _logger.LogInformation($"GetAllServers completed in {timer.ElapsedMilliseconds} ms, {timer.Elapsed} s.");
+        }
 
         public void StartGettingInformation()
         {

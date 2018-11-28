@@ -62,5 +62,13 @@ namespace RageServers.Database.Service
                 return servers;
             }
         }
+
+        public async Task<IEnumerable<ServerEntity>> GetAllServersAsync()
+        {
+            using (var session = _store.OpenAsyncSession())
+            {
+                return await session.Advanced.AsyncDocumentQuery<ServerEntity, ServerEntity_ByIP>().ToListAsync();
+            }
+        }
     }
 }
