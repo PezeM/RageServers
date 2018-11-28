@@ -29,12 +29,6 @@ namespace RageServers
                 _appSettings.Configuration.DisplayInformation);
             client.StartGettingInformation();
             Console.ReadKey();
-
-            //var client = new RageClient(_appSettings.RavenSettings.Url
-            //    , _appSettings.Configuration.ServersToDisplayInformationAbout
-            //    , _appSettings.Configuration.Interval
-            //    , _appSettings.Configuration.DisplayInformation);
-            //await client.StartGettingInformation();
         }
     }
 }

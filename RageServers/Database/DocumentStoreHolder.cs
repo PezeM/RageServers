@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Data.Common;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using RageServers.Database.Indexes;
@@ -34,11 +33,10 @@ namespace RageServers.Database
 
             _logger.LogInformation($"Initialized RavenDB document store for {ravenSettings.Database} at {ravenSettings.Url}");
 
-            // Create if not exists
+            // Create database if not exists
             CreateDatabaseIfNotExists();
 
-            IndexCreation.CreateIndexes(
-                typeof(ServerEntity_ByIP).Assembly, Store);
+            IndexCreation.CreateIndexes(typeof(ServerEntity_ByIP).Assembly, Store);
         }
 
         private void CreateDatabaseIfNotExists()
