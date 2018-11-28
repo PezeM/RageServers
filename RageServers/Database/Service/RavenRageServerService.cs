@@ -33,25 +33,6 @@ namespace RageServers.Database.Service
             }
         }
 
-        public async Task InsertAsync(Dictionary<string, ServerInfo> servers)
-        {
-            using (var session = _store.OpenAsyncSession())
-            {
-                foreach (var serverInfo in servers)
-                {
-                    var newServer = new ServerEntity
-                    {
-                        Datetime = DateTime.Now,
-                        IP = serverInfo.Key,
-                        ServerInfo = serverInfo.Value
-                    };
-
-                    await session.StoreAsync(newServer);
-                    await session.SaveChangesAsync();
-                }
-            }
-        }
-
         public async Task<ServerEntity> GetServerEntityAsync(string id)
         {
             using (var session = _store.OpenAsyncSession())
@@ -71,7 +52,7 @@ namespace RageServers.Database.Service
             }
         }
 
-        public async Task<IList<ServerEntity>> GetServerEntityByIpAsync(string ip)
+        public async Task<IList<ServerEntity>> GetServerEntitiesByIpAsync(string ip)
         {
             using (var session = _store.OpenAsyncSession())
             {

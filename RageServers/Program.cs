@@ -50,7 +50,7 @@ namespace RageServers
 
             // Configure services
             services.AddSingleton<IDocumentStoreHolder, DocumentStoreHolder>();
-            services.AddTransient<RavenRageServerService, RavenRageServerService>();
+            services.AddTransient<IRageServerService, RavenRageServerService>();
             services.AddSingleton<RageClient, RageClient>();
 
             // add app
