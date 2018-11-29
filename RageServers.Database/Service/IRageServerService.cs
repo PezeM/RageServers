@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using RageServers.Entity;
 
@@ -12,5 +13,6 @@ namespace RageServers.Database.Service
         Task<IList<ServerEntity>> GetServerEntitiesByIpAsync(string ip);
         Task<IEnumerable<ServerEntity>> GetAllServersAsync();
         int GetPeakPlayersForServer(string ip);
+        int GetPeakPlayersForServerInDateRange(string ip, DateTime startDateTime, DateTime endDateTime);
     }
 }

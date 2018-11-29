@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using RageServers.Database.Indexes;
 using RageServers.Entity;
 using Raven.Client.Documents;
 using Raven.Client.Documents.Linq;
+using Raven.Client.Documents.Operations;
 
 namespace RageServers.Database.Service
 {
@@ -22,9 +25,10 @@ namespace RageServers.Database.Service
         {
             using (var session = _store.OpenAsyncSession())
             {
+                var datetime = DateTime.Now;
                 var newServer = new ServerEntity
                 {
-                    Datetime = DateTime.Now,
+                    Datetime = datetime.AddTicks(-(datetime.Ticks % TimeSpan.TicksPerSecond)), // Removes ms from datetime
                     IP = ip,
                     ServerInfo = server
                 };
@@ -58,7 +62,8 @@ namespace RageServers.Database.Service
             using (var session = _store.OpenAsyncSession())
             {
                 var servers = await session.Query<ServerEntity, ServerEntity_ByIP>()
-                    .Where(s => s.IP == ip).ToListAsync();
+                    .Where(s => s.IP == ip)
+                    .ToListAsync();
 
                 return servers;
             }
@@ -76,10 +81,26 @@ namespace RageServers.Database.Service
         {
             using (var session = _store.OpenSession())
             {
-                return session.Query<ServerEntity>().Where(q => q.IP == ip).ToList().Max(q => q.ServerInfo.Peak);
+                return session.Query<ServerEntity>().Where(q => q.IP == ip)
+                    .ToList()
+                    .Max(q => q.ServerInfo.Peak);
 
                 //return session.Query<ServerEntity>().Where(q => q.IP == ip).OrderBy(q => q.ServerInfo.Peak).Take(1)
                 //    .Select(q => q.ServerInfo.Peak).FirstOrDefault();
+            }
+        }
+
+        public int GetPeakPlayersForServerInDateRange(string ip, DateTime startDateTime, DateTime endDateTime)
+        {
+            using (var session = _store.OpenSession())
+            {
+                return session.Advanced.DocumentQuery<ServerEntity>()
+                    .WhereEquals(q => q.IP, ip)
+                    .WhereBetween(q => q.Datetime, startDateTime, endDateTime)
+                    .OrderByDescending(q => q.ServerInfo.Peak)
+                    .ToList()
+                    .Select(q => q.ServerInfo.Peak)
+                    .FirstOrDefault();
             }
         }
     }
