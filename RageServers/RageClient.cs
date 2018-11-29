@@ -1,18 +1,26 @@
-﻿using System;
+﻿using RageServers.Database.Service;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Timers;
+using Microsoft.Extensions.Logging;
+using RageServers.Models;
+using Microsoft.Extensions.Options;
 
 namespace RageServers
 {
+    /// <summary>
+    /// Entry point in application
+    /// </summary>
     public class RageClient
     {
         private static HttpClient _client = new HttpClient();
         private readonly string mainUrl = "https://cdn.rage.mp/master/";
-        private ServersDatabase _serversDb;
+        private RavenRageServerService _ravenRage;
+        private readonly ILogger<RageClient> _logger;
         private Timer _timer;
 
         /// <summary>
@@ -36,53 +44,55 @@ namespace RageServers
         public double Interval { get; private set; }
 
         /// <summary>
-        /// Starting point for application
+        /// Starting point in application
         /// </summary>
-        /// <param name="connectionString">Connection string for database.</param>
-        /// <param name="serversToDisplayInformationAbout">List of servers to diplay informations about</param>
-        /// <param name="interval">Time interval between requests</param>
-        /// <param name="displayInformation">Set to true if allowed to display informations about servers</param>
-        public RageClient(string connectionString, IEnumerable<string> serversToDisplayInformationAbout,
-            double interval = 60000, bool displayInformation = true)
+        /// <param name="ravenRage">Raven database service.</param>
+        public RageClient(RavenRageServerService ravenRage, IOptions<AppSettings> appSettings, ILogger<RageClient> logger)
         {
-            DisplayInformation = displayInformation;
-            ServersToDisplayInformationAbout = serversToDisplayInformationAbout;
+            _logger = logger;
+            _ravenRage = ravenRage;
+            var clientSettings = appSettings.Value.Configuration;
+            DisplayInformation = clientSettings.DisplayInformation;
+            ServersToDisplayInformationAbout = clientSettings.ServersToDisplayInformationAbout;
 
-            _serversDb = new ServersDatabase(connectionString);
-
-
-            Interval = interval;
+            Interval = clientSettings.Interval;
             _timer = new Timer(Interval);
             _timer.Elapsed += TimerElapsedAsync;
-            ShowPeakPlayers();
-            DisplayPeakPlayers();
-
+            // GetAllServersAsync();
+            //GetPeakPlayersForServer("51.68.154.84:22005");
+            //GetPeakPlayersForServerInDateRange("51.68.154.84:22005");
         }
 
-        private void ShowPeakPlayers()
+        private void GetPeakPlayersForServerInDateRange(string id)
         {
             var timer = new Stopwatch();
             timer.Start();
-            var peak = _serversDb.GetPeakPlayersForServerInDateRange("51.68.154.84:22005", new DateTime(2018, 11, 22), DateTime.Now);
+            var peak = _ravenRage.GetPeakPlayersForServerInDateRange(id, new DateTime(2018, 11, 27), DateTime.Now);
             timer.Stop();
-            Console.WriteLine($"ShowPeakPlayers completed in {timer.ElapsedMilliseconds} ms, {timer.Elapsed}");
+            _logger.LogInformation($"GetPeakPlayersForServerInDateRange for {id} completed in {timer.Elapsed} s. Returned {peak} players.");
         }
 
-        private void DisplayPeakPlayers()
+        private void GetPeakPlayersForServer(string id)
         {
             var timer = new Stopwatch();
             timer.Start();
-            var peakPlayers = _serversDb.GetPeakForAllServers();
+            var peak = _ravenRage.GetPeakPlayersForServer(id);
             timer.Stop();
-            Console.WriteLine($"DisplayPeakPlayers completed in {timer.ElapsedMilliseconds} ms, {timer.Elapsed}");
-            //foreach (var server in peakPlayers)
-            //{
-            //    Console.WriteLine($"{server.Key} had maximum {server.Value} players.");
-            //}
+            _logger.LogInformation($"GetPeakPlayersForServer for {id} completed in {timer.Elapsed} s. Returned {peak} players.");
+        }
+
+        public async Task GetAllServersAsync()
+        {
+            var timer = new Stopwatch();
+            timer.Start();
+            await _ravenRage.GetAllServersAsync();
+            timer.Stop();
+            _logger.LogInformation($"GetAllServers completed in {timer.ElapsedMilliseconds} ms, {timer.Elapsed} s.");
         }
 
         public void StartGettingInformation()
         {
+            _logger.LogInformation("RageClient started getting information.");
             _timer.Enabled = true;
         }
 
@@ -112,23 +122,27 @@ namespace RageServers
         {
             try
             {
-                var response = await _client.GetStringAsync(mainUrl);
+                var response = await _client.GetStringAsync(url);
                 var servers = JsonService.DeserializeRageServerInfos<string, ServerInfo>(response);
 
                 if (DisplayInformation)
                     DisplayInformations(servers);
 
-                AddToDatabase(servers);
+                await AddToDatabaseAsync(servers);
             }
             catch (HttpRequestException e)
             {
-                Console.WriteLine($"EXCEPTION FOUND MESSAGE: {e.Message}");
+                _logger.LogError($"HttpRequestException: {e.Message}");
             }
         }
 
-        private void AddToDatabase(Dictionary<string, ServerInfo> servers)
+        private async Task AddToDatabaseAsync(Dictionary<string, ServerInfo> servers)
         {
-            _serversDb.Insert(servers);
+            foreach (var serverInfo in servers)
+            {
+                await _ravenRage.InsertAsync(serverInfo.Key, serverInfo.Value);
+            }
+            _logger.LogInformation($"RageClient finished adding {servers.Count} entities to database.");
         }
     }
 }
