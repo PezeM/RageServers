@@ -1,14 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using RageServers.Database.Indexes;
 using RageServers.Entity;
 using Raven.Client.Documents;
 using Raven.Client.Documents.Linq;
-using Raven.Client.Documents.Operations;
 
 namespace RageServers.Database.Service
 {
@@ -21,6 +18,11 @@ namespace RageServers.Database.Service
             _store = storeHolder.Store;
         }
 
+        /// <summary>
+        /// Insert server information to database
+        /// </summary>
+        /// <param name="ip">Server IP</param>
+        /// <param name="server">Server information</param>
         public async Task InsertAsync(string ip, ServerInfo server)
         {
             using (var session = _store.OpenAsyncSession())
@@ -57,15 +59,13 @@ namespace RageServers.Database.Service
             }
         }
 
-        public async Task<IList<ServerEntity>> GetServerEntitiesByIpAsync(string ip)
+        public async Task<List<ServerEntity>> GetServerEntitiesByIpAsync(string ip)
         {
             using (var session = _store.OpenAsyncSession())
             {
-                var servers = await session.Query<ServerEntity, ServerEntity_ByIP>()
+                return await session.Query<ServerEntity, ServerEntity_ByIP>()
                     .Where(s => s.IP == ip)
                     .ToListAsync();
-
-                return servers;
             }
         }
 
@@ -101,6 +101,21 @@ namespace RageServers.Database.Service
                     .ToList()
                     .Select(q => q.ServerInfo.Peak)
                     .FirstOrDefault();
+            }
+        }
+
+        /// <summary>
+        /// Get <see cref="Dictionary{TKey,TValue}"/> with maxium number of players on the server for each day.
+        /// </summary>
+        /// <param name="ip">Ip of the server</param>
+        /// <returns>Dictionary with DateTime and number of players</returns>
+        public async Task<Dictionary<DateTime, int>> GetPeakPlayersForServerForEachDayAsync(string ip)
+        {
+            using (var session = _store.OpenSession())
+            {
+                var list = await GetServerEntitiesByIpAsync(ip);
+                return list.GroupBy(q => q.Datetime.Date).ToDictionary(q => q.Key,
+                    q => q.Max(x => x.ServerInfo.Players));
             }
         }
     }
