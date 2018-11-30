@@ -61,6 +61,20 @@ namespace RageServers
             // GetAllServersAsync();
             //GetPeakPlayersForServer("51.68.154.84:22005");
             //GetPeakPlayersForServerInDateRange("51.68.154.84:22005");
+            GetPeakPlayersForServerInDay("51.68.154.84:22005");
+        }
+
+        private async Task GetPeakPlayersForServerInDay(string ip)
+        {
+            var timer = new Stopwatch();
+            timer.Start();
+            var players = await _ravenRage.GetPeakPlayersForServerForEachDayAsync(ip);
+            timer.Stop();
+            _logger.LogInformation($"GetPeakPlayersForServerInDay for {ip} completed in {timer.Elapsed} s.");
+            foreach (var peak in players)
+            {
+                Console.WriteLine($"{peak.Key}: {peak.Value}");
+            }
         }
 
         private void GetPeakPlayersForServerInDateRange(string id)
