@@ -4,18 +4,17 @@
     ViewData["Title"] = "Server list";
 }
 
-<table>
-    <tr>
-        <td>IP</td>
-        <td>Name</td>
-        <td>Players</td>
-    </tr>
-    @foreach (var server in Model.Servers)
-    {
-        <tr>
-            <td>@server.Key</td>
-            <td>@server.Value.Name</td>
-            <td>@server.Value.Players</td>
-        </tr>
-    }
-</table>
+
+<div>
+    <div class="row">
+        <div class="col-md-2">
+            @foreach (var server in Model.Servers)
+            {
+                @Html.Partial("_Summary", server);
+            }
+        </div>
+        <div class="col-md-10">
+            GŁOWNY TEKST
+        </div>
+    </div>
+</div>

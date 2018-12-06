@@ -1,9 +1,10 @@
 ﻿using System.Collections.Generic;
+using RageServers.Entity;
 
 namespace RageServers.Web.ViewModels
 {
     public class HomeIndexViewModel
     {
-        public Dictionary<string, ServerInfo> Servers { get; set; }
+        public IEnumerable<ServerEntity> Servers { get; set; }
     }
 }
