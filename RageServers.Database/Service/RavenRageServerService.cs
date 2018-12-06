@@ -40,6 +40,11 @@ namespace RageServers.Database.Service
             }
         }
 
+        /// <summary>
+        /// Get ServerEntity from database by id
+        /// </summary>
+        /// <param name="id">ID of the entity</param>
+        /// <returns><see cref="ServerEntity"/></returns>
         public async Task<ServerEntity> GetServerEntityAsync(string id)
         {
             using (var session = _store.OpenAsyncSession())
@@ -49,6 +54,10 @@ namespace RageServers.Database.Service
             }
         }
 
+        /// <summary>
+        /// Deletes server entity from databse by id
+        /// </summary>
+        /// <param name="id">ID of the entity to remove</param>
         public async Task<bool> DeleteServerEntityAsync(string id)
         {
             using (var session = _store.OpenAsyncSession())
@@ -59,6 +68,11 @@ namespace RageServers.Database.Service
             }
         }
 
+        /// <summary>
+        /// Gets all server entities from database by ip
+        /// </summary>
+        /// <param name="ip">IP of the Rage server</param>
+        /// <returns>List of <see cref="ServerEntity"/></returns>
         public async Task<List<ServerEntity>> GetServerEntitiesByIpAsync(string ip)
         {
             using (var session = _store.OpenAsyncSession())
@@ -69,14 +83,24 @@ namespace RageServers.Database.Service
             }
         }
 
+        /// <summary>
+        /// Get all server entities from database
+        /// </summary>
+        /// <returns><see cref="IEnumerable{ServerEntity}"/> of <see cref="ServerEntity"/></returns>
         public async Task<IEnumerable<ServerEntity>> GetAllServersAsync()
         {
             using (var session = _store.OpenAsyncSession())
             {
-                return await session.Advanced.AsyncDocumentQuery<ServerEntity, ServerEntity_ByIP>().ToListAsync();
+                return await session.Advanced.AsyncDocumentQuery<ServerEntity, ServerEntity_ByIP>()
+                    .ToListAsync();
             }
         }
 
+        /// <summary>
+        /// Get highest number of players for server from database by ip
+        /// </summary>
+        /// <param name="ip">IP of Rage server</param>
+        /// <returns>Highest number of players</returns>
         public int GetPeakPlayersForServer(string ip)
         {
             using (var session = _store.OpenSession())
@@ -90,6 +114,13 @@ namespace RageServers.Database.Service
             }
         }
 
+        /// <summary>
+        /// Get highest number of players for server from database by ip in date range
+        /// </summary>
+        /// <param name="ip">IP of Rage server</param>
+        /// <param name="startDateTime">Start date</param>
+        /// <param name="endDateTime">End date</param>
+        /// <returns>Highest number of players</returns>
         public int GetPeakPlayersForServerInDateRange(string ip, DateTime startDateTime, DateTime endDateTime)
         {
             using (var session = _store.OpenSession())
