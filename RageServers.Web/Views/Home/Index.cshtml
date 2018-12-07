@@ -4,17 +4,6 @@
     ViewData["Title"] = "Server list";
 }
 
-
-<div>
-    <div class="row">
-        <div class="col-md-2">
-            @foreach (var server in Model.Servers)
-            {
-                @Html.Partial("_Summary", server);
-            }
-        </div>
-        <div class="col-md-10">
-            GŁOWNY TEKST
-        </div>
-    </div>
+<div class="container">
+    <h1>Click on the server on left side to display more informations</h1>
 </div>

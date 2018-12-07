@@ -24,7 +24,15 @@
         </a>
     </nav>
 
-    @RenderBody()
+    <div class="row">
+        <div class="col-md-2">
+            <vc:server-list></vc:server-list>
+        </div>
+
+        <div class="col-md-10">
+            @RenderBody()
+        </div>
+    </div>
 
     <environment include="Development">
         <script src="~/node_modules/jquery/dist/jquery.js"></script>
