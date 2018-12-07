@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using RageServers.Entity;
+using RageServers.Models;
 
 namespace RageServers.Database.Service
 {

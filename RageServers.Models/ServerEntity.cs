@@ -1,7 +1,8 @@
 ﻿using System;
 using Newtonsoft.Json;
+using RageServers;
 
-namespace RageServers.Entity
+namespace RageServers.Models
 {
     public class ServerEntity
     {

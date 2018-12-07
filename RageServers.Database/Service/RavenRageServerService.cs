@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using RageServers.Database.Indexes;
-using RageServers.Entity;
+using RageServers.Models;
 using Raven.Client.Documents;
 using Raven.Client.Documents.Linq;
 
@@ -114,7 +114,9 @@ namespace RageServers.Database.Service
             using (var session = _store.OpenSession())
             {
                 var list = await GetServerEntitiesByIpAsync(ip);
-                return list.GroupBy(q => q.Datetime.Date).ToDictionary(q => q.Key,
+                return list.GroupBy(q => q.Datetime.Date)
+                    .ToDictionary
+                    (q => q.Key,
                     q => q.Max(x => x.ServerInfo.Players));
             }
         }

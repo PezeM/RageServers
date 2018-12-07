@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using RageServers.Entity;
+using RageServers.Models;
 
 namespace RageServers.Web.ViewModels
 {
