@@ -1,0 +1,12 @@
+﻿@model Dictionary<string, RageServers.ServerInfo>
+
+<div>
+    @foreach (var server in Model)
+    {
+        <a asp-action="Details" asp-route-ip="@server.Key">
+            <div>
+                @server.Key
+            </div>
+        </a>
+    }
+</div>

@@ -1,4 +1,4 @@
-﻿using RageServers.Entity;
+﻿using RageServers.Models;
 using Raven.Client.Documents.Indexes;
 using System.Linq;
 

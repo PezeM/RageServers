@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace RageServers
 {
-    public class JsonService
+    public static class JsonService
     {
         public static Dictionary<string, ServerInfo> DeserializeRageServerInfos(string json)
         {

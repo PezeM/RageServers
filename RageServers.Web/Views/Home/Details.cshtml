@@ -1,0 +1,73 @@
+﻿@model RageServers.Models.ServerEntity
+
+@{
+    ViewBag.Title = Model.IP;
+}
+
+
+<div>
+    <table>
+        <tr>
+            <td>
+                IP:
+            </td>
+            <td>
+                @Model.IP
+            </td>
+        </tr>
+
+        <tr>
+            <td>
+                Name:
+            </td>
+            <td>
+                @Model.ServerInfo.Name
+            </td>
+        </tr>
+
+        <tr>
+            <td>
+                URL:
+            </td>
+            <td>
+                @Model.ServerInfo.Url
+            </td>
+        </tr>
+
+        <tr>
+            <td>
+                Gamemode:
+            </td>
+            <td>
+                @Model.ServerInfo.Gamemode
+            </td>
+        </tr>
+
+        <tr>
+            <td>
+                Language:
+            </td>
+            <td>
+                @Model.ServerInfo.Lang
+            </td>
+        </tr>
+
+        <tr>
+            <td>
+                Current Players:
+            </td>
+            <td>
+                @Model.ServerInfo.Players
+            </td>
+        </tr>
+
+        <tr>
+            <td>
+                Players peak:
+            </td>
+            <td>
+                @Model.ServerInfo.Peak
+            </td>
+        </tr>
+    </table>
+</div>
