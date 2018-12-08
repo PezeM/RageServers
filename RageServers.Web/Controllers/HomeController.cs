@@ -3,6 +3,7 @@ using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using RageServers.Database.Service;
+using RageServers.Models;
 using RageServers.Web.Models;
 
 namespace RageServers.Web.Controllers
@@ -23,8 +24,9 @@ namespace RageServers.Web.Controllers
             return View();
         }
 
-        public IActionResult Details(string ip)
+        public IActionResult Details(string ip, ServerInfo currentServerInfo)
         {
+            var serverInfo = currentServerInfo;
             var server = _ravenRageDatabase.GetServerEntitiesByIpAsync(ip).Result;
             var model = server.FirstOrDefault();
 

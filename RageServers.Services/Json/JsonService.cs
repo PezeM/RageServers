@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using RageServers.Models;
 using System.Collections.Generic;
 
 namespace RageServers

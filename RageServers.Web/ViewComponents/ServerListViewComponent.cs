@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using RageServers.Models;
 using RageServers.Services.Requests;
 
 namespace RageServers.Web.ViewComponents
