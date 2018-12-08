@@ -1,9 +1,13 @@
 ﻿body {
-    padding: 0px;
-    margin: 0px;
+    padding: 0;
+    margin: 0;
 }
 
 .main-body {
     margin: 5px;
     padding: 15px;
+}
+
+.server-list-container {
+    border: 1px solid black;
 }

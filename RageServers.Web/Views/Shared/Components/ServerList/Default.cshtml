@@ -1,12 +1,31 @@
 ﻿@model Dictionary<string, RageServers.ServerInfo>
 
-<div>
-    @foreach (var server in Model)
-    {
+@foreach (var server in Model)
+{
+    <div class="server-list-container">
         <a asp-action="Details" asp-route-ip="@server.Key">
-            <div>
-                @server.Key
+            <div class="row">
+                <div class="col-sm-12">
+                    <span class="font-weight-light text-justify">
+                        @server.Value.Name
+                    </span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-9">
+                    <span class="font-italic">
+                        @server.Key
+                    </span>
+                </div>
+                <div class="col-sm-1">
+                    <img src="/images/baseline-person-24px.svg" style="color: red;" />
+                </div>
+                <div class="col-sm-1">
+                    <span class="font-bold">
+                        @server.Value.Players
+                    </span>
+                </div>
             </div>
         </a>
-    }
-</div>
+    </div>
+}
