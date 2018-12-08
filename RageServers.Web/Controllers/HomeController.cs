@@ -1,9 +1,10 @@
 ﻿using System.Diagnostics;
-using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using RageServers.Database.Service;
 using RageServers.Web.Models;
+using RageServers.Web.ViewModels;
 
 namespace RageServers.Web.Controllers
 {
@@ -23,15 +24,24 @@ namespace RageServers.Web.Controllers
             return View();
         }
 
-        public IActionResult Details(string ip, int currentPlayers, int slots, string lang, string gamemode)
+        public async Task<IActionResult> Details(string ip, int currentPlayers, int slots, string lang, string gamemode)
         {
-            var server = _ravenRageDatabase.GetServerEntitiesByIpAsync(ip).Result;
-            var model = server.FirstOrDefault();
+            var peakPlayers = await _ravenRageDatabase.GetPeakPlayersForServerForEachDayAsync(ip);
 
-            if (model == null)
+            if (peakPlayers == null)
             {
                 return RedirectToAction(nameof(Index));
             }
+
+            var model = new HomeDetailsViewModel
+            {
+                PeakPlayers = peakPlayers,
+                IP = ip,
+                Gamemode = gamemode,
+                Lang = lang,
+                CurrentPlayers = currentPlayers,
+                Slots = slots
+            };
 
             return View(model);
         }

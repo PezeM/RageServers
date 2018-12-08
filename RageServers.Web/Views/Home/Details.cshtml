@@ -1,4 +1,4 @@
-﻿@model RageServers.Models.ServerEntity
+﻿@model RageServers.Web.ViewModels.HomeDetailsViewModel
 
 @{
     ViewBag.Title = Model.IP;
@@ -18,28 +18,10 @@
 
         <tr>
             <td>
-                Name:
-            </td>
-            <td>
-                @Model.ServerInfo.Name
-            </td>
-        </tr>
-
-        <tr>
-            <td>
-                URL:
-            </td>
-            <td>
-                @Model.ServerInfo.Url
-            </td>
-        </tr>
-
-        <tr>
-            <td>
                 Gamemode:
             </td>
             <td>
-                @Model.ServerInfo.Gamemode
+                @Model.Gamemode
             </td>
         </tr>
 
@@ -48,7 +30,7 @@
                 Language:
             </td>
             <td>
-                @Model.ServerInfo.Lang
+                @Model.Lang
             </td>
         </tr>
 
@@ -57,17 +39,34 @@
                 Current Players:
             </td>
             <td>
-                @Model.ServerInfo.Players
+                @Model.CurrentPlayers
             </td>
         </tr>
 
         <tr>
             <td>
-                Players peak:
+                Slots:
             </td>
             <td>
-                @Model.ServerInfo.Peak
+                @Model.Slots
             </td>
         </tr>
+
+        <tr>
+            <td><span class="font-weight-bold">Day</span></td>
+            <td><span class="font-weight-bold">Peak</span></td>
+        </tr>
+
+        @foreach (var peakInfo in @Model.PeakPlayers)
+        {
+            <tr>
+                <td>
+                    @peakInfo.Key.ToShortDateString()
+                </td>
+                <td>
+                    @peakInfo.Value
+                </td>
+            </tr>
+        }
     </table>
 </div>
