@@ -9,11 +9,11 @@ using Raven.Client.Documents.Linq;
 
 namespace RageServers.Database.Service
 {
-    public class RavenRageServerService : IRageServerService
+    public class RavenRageDatabaseServerService : IRageDatabaseServerService
     {
         private readonly IDocumentStore _store;
 
-        public RavenRageServerService(IDocumentStoreHolder storeHolder)
+        public RavenRageDatabaseServerService(IDocumentStoreHolder storeHolder)
         {
             _store = storeHolder.Store;
         }

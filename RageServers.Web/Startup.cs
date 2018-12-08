@@ -8,6 +8,7 @@ using Microsoft.Extensions.Logging;
 using RageServers.Database;
 using RageServers.Database.Service;
 using RageServers.Models;
+using RageServers.Services.Requests;
 
 namespace RageServers.Web
 {
@@ -35,7 +36,8 @@ namespace RageServers.Web
             services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
 
             services.AddSingleton<IDocumentStoreHolder, DocumentStoreHolder>();
-            services.AddTransient<RavenRageServerService, RavenRageServerService>();
+            services.AddSingleton<HtmlRequest, HtmlRequest>();
+            services.AddTransient<IRageDatabaseServerService, RavenRageDatabaseServerService>();
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }

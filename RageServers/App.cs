@@ -11,14 +11,14 @@ namespace RageServers
     {
         private readonly ILogger<App> _logger;
         private readonly AppSettings _appSettings;
-        private RavenRageServerService _ravenRageServerService;
+        private IRageDatabaseServerService _ravenRageDatabaseServerService;
         private RageClient _rageClient;
 
-        public App(IOptions<AppSettings> appSettings, ILogger<App> logger, RavenRageServerService ravenRageServerService, RageClient rageClient)
+        public App(IOptions<AppSettings> appSettings, ILogger<App> logger, IRageDatabaseServerService ravenRageDatabaseServerService, RageClient rageClient)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _appSettings = appSettings?.Value ?? throw new ArgumentNullException(nameof(appSettings));
-            _ravenRageServerService = ravenRageServerService;
+            _ravenRageDatabaseServerService = ravenRageDatabaseServerService;
             _rageClient = rageClient;
         }
 

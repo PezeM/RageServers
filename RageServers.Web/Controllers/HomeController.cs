@@ -9,12 +9,12 @@ namespace RageServers.Web.Controllers
 {
     public class HomeController : Controller
     {
-        private RavenRageServerService _ravenRage;
+        private IRageDatabaseServerService _ravenRageDatabase;
         private ILogger<HomeController> _logger;
 
-        public HomeController(RavenRageServerService ravenRage, ILogger<HomeController> logger)
+        public HomeController(IRageDatabaseServerService ravenRageDatabase, ILogger<HomeController> logger)
         {
-            _ravenRage = ravenRage;
+            _ravenRageDatabase = ravenRageDatabase;
             _logger = logger;
         }
 
@@ -25,7 +25,7 @@ namespace RageServers.Web.Controllers
 
         public IActionResult Details(string ip)
         {
-            var server = _ravenRage.GetServerEntitiesByIpAsync(ip).Result;
+            var server = _ravenRageDatabase.GetServerEntitiesByIpAsync(ip).Result;
             var model = server.FirstOrDefault();
 
             if (model == null)

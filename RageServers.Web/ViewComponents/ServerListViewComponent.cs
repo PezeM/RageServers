@@ -1,40 +1,29 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
+using RageServers.Services.Requests;
 
 namespace RageServers.Web.ViewComponents
 {
     public class ServerListViewComponent : ViewComponent
     {
-        private static HttpClient _client = new HttpClient();
-        private ILogger<ServerListViewComponent> _logger;
+        private HtmlRequest _request;
 
-        public ServerListViewComponent(ILogger<ServerListViewComponent> logger)
+        public ServerListViewComponent(HtmlRequest request)
         {
-            _logger = logger;
+            _request = request;
         }
 
         public IViewComponentResult Invoke()
         {
-            var servers = GetServersAsync().Result.OrderByDescending(x => x.Value.Players).ToDictionary(x => x.Key, x => x.Value);
+            var servers = GetOnlineServersAsync().Result.OrderByDescending(x => x.Value.Players).ToDictionary(x => x.Key, x => x.Value);
             return View("Default", servers);
         }
 
-        private async Task<Dictionary<string, ServerInfo>> GetServersAsync()
+        private async Task<Dictionary<string, ServerInfo>> GetOnlineServersAsync()
         {
-            try
-            {
-                var response = await _client.GetStringAsync("https://cdn.rage.mp/master/");
-                return JsonService.DeserializeRageServerInfos<string, ServerInfo>(response);
-            }
-            catch (HttpRequestException e)
-            {
-                _logger.LogError($"HttpRequestException: {e.Message}");
-                return null;
-            }
+            return await _request.GetServersAsync();
         }
     }
 }

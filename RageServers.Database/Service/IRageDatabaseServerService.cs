@@ -5,7 +5,7 @@ using RageServers.Models;
 
 namespace RageServers.Database.Service
 {
-    public interface IRageServerService
+    public interface IRageDatabaseServerService
     {
         Task InsertAsync(string ip, ServerInfo server);
         Task<bool> DeleteServerEntityAsync(string id);

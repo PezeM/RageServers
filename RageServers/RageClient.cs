@@ -19,7 +19,7 @@ namespace RageServers
     {
         private static HttpClient _client = new HttpClient();
         private readonly string mainUrl = "https://cdn.rage.mp/master/";
-        private RavenRageServerService _ravenRage;
+        private IRageDatabaseServerService _ravenRageDatabase;
         private readonly ILogger<RageClient> _logger;
         private Timer _timer;
 
@@ -46,11 +46,11 @@ namespace RageServers
         /// <summary>
         /// Starting point in application
         /// </summary>
-        /// <param name="ravenRage">Raven database service.</param>
-        public RageClient(RavenRageServerService ravenRage, IOptions<AppSettings> appSettings, ILogger<RageClient> logger)
+        /// <param name="ravenRageDatabase">Raven database service.</param>
+        public RageClient(IRageDatabaseServerService ravenRageDatabase, IOptions<AppSettings> appSettings, ILogger<RageClient> logger)
         {
             _logger = logger;
-            _ravenRage = ravenRage;
+            _ravenRageDatabase = ravenRageDatabase;
             var clientSettings = appSettings.Value.Configuration;
             DisplayInformation = clientSettings.DisplayInformation;
             ServersToDisplayInformationAbout = clientSettings.ServersToDisplayInformationAbout;
@@ -68,7 +68,7 @@ namespace RageServers
         {
             var timer = new Stopwatch();
             timer.Start();
-            var players = await _ravenRage.GetPeakPlayersForServerForEachDayAsync(ip);
+            var players = await _ravenRageDatabase.GetPeakPlayersForServerForEachDayAsync(ip);
             timer.Stop();
             _logger.LogInformation($"GetPeakPlayersForServerInDay for {ip} completed in {timer.Elapsed} s.");
             foreach (var peak in players)
@@ -81,7 +81,7 @@ namespace RageServers
         {
             var timer = new Stopwatch();
             timer.Start();
-            var peak = _ravenRage.GetPeakPlayersForServerInDateRange(id, new DateTime(2018, 11, 27), DateTime.Now);
+            var peak = _ravenRageDatabase.GetPeakPlayersForServerInDateRange(id, new DateTime(2018, 11, 27), DateTime.Now);
             timer.Stop();
             _logger.LogInformation($"GetPeakPlayersForServerInDateRange for {id} completed in {timer.Elapsed} s. Returned {peak} players.");
         }
@@ -90,7 +90,7 @@ namespace RageServers
         {
             var timer = new Stopwatch();
             timer.Start();
-            var peak = _ravenRage.GetPeakPlayersForServer(id);
+            var peak = _ravenRageDatabase.GetPeakPlayersForServer(id);
             timer.Stop();
             _logger.LogInformation($"GetPeakPlayersForServer for {id} completed in {timer.Elapsed} s. Returned {peak} players.");
         }
@@ -99,7 +99,7 @@ namespace RageServers
         {
             var timer = new Stopwatch();
             timer.Start();
-            await _ravenRage.GetAllServersAsync();
+            await _ravenRageDatabase.GetAllServersAsync();
             timer.Stop();
             _logger.LogInformation($"GetAllServers completed in {timer.ElapsedMilliseconds} ms, {timer.Elapsed} s.");
         }
@@ -154,7 +154,7 @@ namespace RageServers
         {
             foreach (var serverInfo in servers)
             {
-                await _ravenRage.InsertAsync(serverInfo.Key, serverInfo.Value);
+                await _ravenRageDatabase.InsertAsync(serverInfo.Key, serverInfo.Value);
             }
             _logger.LogInformation($"RageClient finished adding {servers.Count} entities to database.");
         }
