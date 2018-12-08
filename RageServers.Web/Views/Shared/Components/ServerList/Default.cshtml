@@ -3,7 +3,8 @@
 
 @foreach (var server in Model)
 {
-    <a asp-action="Details" asp-route-ip="@server.Key">
+    <a asp-action="Details" asp-route-ip="@server.Key" asp-route-currentPlayers="@server.Value.Players"
+       asp-route-slots="@server.Value.Maxplayers" asp-route-lang="@server.Value.Lang" asp-route-gamemode="@server.Value.Gamemode">
         <div class="row">
             <div class="col-sm-12">
                 <span class="font-weight-light text-justify">

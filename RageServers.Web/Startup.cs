@@ -63,6 +63,9 @@ namespace RageServers.Web
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
+                    name: "details",
+                    template: "{controller=Home}/{action=Details}/Details/{ip}/{currentPlayers}/{slots}/{lang}/{gamemode}");
+                routes.MapRoute(
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
