@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -18,7 +19,7 @@ namespace RageServers.Web.ViewComponents
 
         public IViewComponentResult Invoke()
         {
-            var servers = GetServersAsync().Result;
+            var servers = GetServersAsync().Result.OrderByDescending(x => x.Value.Players).ToDictionary(x => x.Key, x => x.Value);
             return View("Default", servers);
         }
 
