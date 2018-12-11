@@ -9,6 +9,7 @@ using System.Timers;
 using Microsoft.Extensions.Logging;
 using RageServers.Models;
 using Microsoft.Extensions.Options;
+using RageServers.Services.Requests;
 
 namespace RageServers
 {
@@ -17,7 +18,7 @@ namespace RageServers
     /// </summary>
     public class RageClient
     {
-        private static HttpClient _client = new HttpClient();
+        private static HtmlRequest _client;
         private readonly string mainUrl = "https://cdn.rage.mp/master/";
         private IRageDatabaseServerService _ravenRageDatabase;
         private readonly ILogger<RageClient> _logger;
@@ -47,10 +48,11 @@ namespace RageServers
         /// Starting point in application
         /// </summary>
         /// <param name="ravenRageDatabase">Raven database service.</param>
-        public RageClient(IRageDatabaseServerService ravenRageDatabase, IOptions<AppSettings> appSettings, ILogger<RageClient> logger)
+        public RageClient(IRageDatabaseServerService ravenRageDatabase, IOptions<AppSettings> appSettings, ILogger<RageClient> logger, HtmlRequest client)
         {
             _logger = logger;
             _ravenRageDatabase = ravenRageDatabase;
+            _client = client;
             var clientSettings = appSettings.Value.Configuration;
             DisplayInformation = clientSettings.DisplayInformation;
             ServersToDisplayInformationAbout = clientSettings.ServersToDisplayInformationAbout;
@@ -112,7 +114,7 @@ namespace RageServers
 
         private async void TimerElapsedAsync(object sender, ElapsedEventArgs e)
         {
-            await GetHtmlAsync(mainUrl);
+            await GetServerInfoAsync();
             Iteration++;
         }
 
@@ -132,22 +134,15 @@ namespace RageServers
             }
         }
 
-        private async Task GetHtmlAsync(string url)
+        private async Task GetServerInfoAsync()
         {
-            try
-            {
-                var response = await _client.GetStringAsync(url);
-                var servers = JsonService.DeserializeRageServerInfos<string, ServerInfo>(response);
+            // Get all servers info from rage cdn
+            var servers = await _client.GetServersAsync();
 
-                if (DisplayInformation)
-                    DisplayInformations(servers);
+            if (DisplayInformation)
+                DisplayInformations(servers);
 
-                await AddToDatabaseAsync(servers);
-            }
-            catch (HttpRequestException e)
-            {
-                _logger.LogError($"HttpRequestException: {e.Message}");
-            }
+            await AddToDatabaseAsync(servers);
         }
 
         private async Task AddToDatabaseAsync(Dictionary<string, ServerInfo> servers)
