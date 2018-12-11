@@ -1,7 +1,14 @@
-﻿@model RageServers.Web.ViewModels.HomeIndexViewModel
-
+﻿@model RageServers.Web.ViewModels.HomeDetailsViewModel
 @{
-    ViewData["Title"] = "Server list";
+    ViewBag.Title = "Testing";
 }
 
-<h1>Click on the server on left side to display more informations</h1>
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <div id="TestingList">
+                <partial name="_TestingList" model="Model" />
+            </div>
+        </div>
+    </div>
+</div>

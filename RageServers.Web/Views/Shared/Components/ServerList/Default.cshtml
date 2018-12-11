@@ -3,8 +3,12 @@
 
 @foreach (var server in Model)
 {
-    <a asp-action="Details" asp-route-ip="@server.Key" asp-route-currentPlayers="@server.Value.Players"
-       asp-route-slots="@server.Value.Maxplayers" asp-route-lang="@server.Value.Lang" asp-route-gamemode="@server.Value.Gamemode">
+    <form asp-action="Details" asp-route-ip="@server.Key" asp-route-currentPlayers="@server.Value.Players"
+          asp-route-slots="@server.Value.Maxplayers" asp-route-lang="@server.Value.Lang" asp-route-gamemode="@server.Value.Gamemode"
+          data-ajax="true" data-ajax-update="#TestingList">
+        @*<a asp-action="Details" asp-route-ip="@server.Key" asp-route-currentPlayers="@server.Value.Players"
+            asp-route-slots="@server.Value.Maxplayers" asp-route-lang="@server.Value.Lang" asp-route-gamemode="@server.Value.Gamemode"
+            data-ajax="true" data-ajax-update="#TestingList">*@
         <div class="row">
             <div class="col-sm-12">
                 <span class="font-weight-light text-justify">
@@ -13,7 +17,7 @@
             </div>
         </div>
         <div class="row">
-            <div class="col-sm-9">
+            <div class="col-sm-8">
                 <span class="font-italic">
                     @server.Key
                 </span>
@@ -28,8 +32,12 @@
                     @server.Value.Players
                 </span>
             </div>
+            <div class="col-sm-1">
+                <button type="submit" class="btn btn-default btn-sm">
+                    Data
+                </button>
+            </div>
         </div>
-    </a>
-
+        @*</a>*@
+    </form>
 }
-

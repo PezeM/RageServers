@@ -1,0 +1,99 @@
+﻿@model RageServers.Web.ViewModels.HomeDetailsViewModel
+
+<div class="card mt-5">
+    <div class="card-header">
+        <div class="row align-items-center">
+            <div class="col">
+                <h4>
+                    Customers
+                </h4>
+            </div>
+        </div>
+    </div>
+    <div class="card-body">
+        @if (Model == null)
+        {
+            <div class="row justify-content-center text-center">
+                <div class="col-12 col-md-10 mt-5">
+                    <i class="fa fa-user fa-5x mb-5"></i>
+                    <h2>
+                        No Customers
+                    </h2>
+                    <p class="text-muted">
+                        You do not have any customers yet. Add a new customer by clicking the <strong>Add Customer</strong> button below.
+                    </p>
+
+                    <a class="btn btn-lg btn-primary d-none d-md-inline-block mt-3" href="#">Add Customer</a>
+                </div>
+            </div> <!-- / .row -->
+        }
+        else
+        {
+            <div>
+                <table>
+                    <tr>
+                        <td>
+                            IP:
+                        </td>
+                        <td>
+                            @Model.IP
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            Gamemode:
+                        </td>
+                        <td>
+                            @Model.Gamemode
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            Language:
+                        </td>
+                        <td>
+                            @Model.Lang
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            Current Players:
+                        </td>
+                        <td>
+                            @Model.CurrentPlayers
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            Slots:
+                        </td>
+                        <td>
+                            @Model.Slots
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td><span class="font-weight-bold">Day</span></td>
+                        <td><span class="font-weight-bold">Peak</span></td>
+                    </tr>
+
+                    @foreach (var peakInfo in @Model.PeakPlayers)
+                    {
+                        <tr>
+                            <td>
+                                @peakInfo.Key.ToShortDateString()
+                            </td>
+                            <td>
+                                @peakInfo.Value
+                            </td>
+                        </tr>
+                    }
+                </table>
+            </div>
+        }
+    </div>
+</div>

@@ -1,18 +1,14 @@
-﻿using System.Diagnostics;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.AspNetCore.Mvc;
 using RageServers.Database.Service;
-using RageServers.Web.Models;
 using RageServers.Web.ViewModels;
 
 namespace RageServers.Web.Controllers
 {
-    public class HomeController : Controller
+    public class TestingController : Controller
     {
         private IRageDatabaseServerService _ravenRageDatabase;
 
-        public HomeController(IRageDatabaseServerService ravenRageDatabase)
+        public TestingController(IRageDatabaseServerService ravenRageDatabase)
         {
             _ravenRageDatabase = ravenRageDatabase;
         }
@@ -22,7 +18,6 @@ namespace RageServers.Web.Controllers
             return View();
         }
 
-        [HttpPost]
         public IActionResult Details(string ip, int currentPlayers, int slots, string lang, string gamemode)
         {
             var peakPlayers = _ravenRageDatabase.GetPeakPlayersForServerForEachDayAsync(ip).Result;
@@ -43,12 +38,6 @@ namespace RageServers.Web.Controllers
             };
 
             return PartialView("_TestingList", model);
-        }
-
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
     }
 }
