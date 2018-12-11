@@ -1,7 +1,6 @@
 ﻿using System.Diagnostics;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using RageServers.Database.Service;
 using RageServers.Web.Models;
 using RageServers.Web.ViewModels;
@@ -23,9 +22,9 @@ namespace RageServers.Web.Controllers
         }
 
         [HttpPost]
-        public IActionResult Details(string ip, int currentPlayers, int slots, string lang, string gamemode)
+        public async Task<IActionResult> Details(string ip, int currentPlayers, int slots, string lang, string gamemode)
         {
-            var peakPlayers = _ravenRageDatabase.GetPeakPlayersForServerForEachDayAsync(ip).Result;
+            var peakPlayers = await _ravenRageDatabase.GetPeakPlayersForServerForEachDayAsync(ip);
 
             if (peakPlayers == null)
             {
@@ -42,7 +41,7 @@ namespace RageServers.Web.Controllers
                 Slots = slots
             };
 
-            return PartialView("_TestingList", model);
+            return PartialView("_ServerDetails", model);
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
