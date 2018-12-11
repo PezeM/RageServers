@@ -6,38 +6,40 @@
     <form asp-action="Details" asp-route-ip="@server.Key" asp-route-currentPlayers="@server.Value.Players"
           asp-route-slots="@server.Value.Maxplayers" asp-route-lang="@server.Value.Lang" asp-route-gamemode="@server.Value.Gamemode"
           data-ajax="true" data-ajax-update="#ServerDetails">
-        @*<a asp-action="Details" asp-route-ip="@server.Key" asp-route-currentPlayers="@server.Value.Players"
-            asp-route-slots="@server.Value.Maxplayers" asp-route-lang="@server.Value.Lang" asp-route-gamemode="@server.Value.Gamemode"
-            data-ajax="true" data-ajax-update="#TestingList">*@
-        <div class="row">
-            <div class="col-sm-12">
-                <span class="font-weight-light text-justify">
-                    @server.Value.Name
-                </span>
-            </div>
+        <div>
+            <a class="submit-link" style="color: #007bff">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <span class="font-weight-light text-justify">
+                            @server.Value.Name
+                        </span>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-8">
+                        <span class="font-italic">
+                            @server.Key
+                        </span>
+                    </div>
+                    <div class="col-sm-1">
+                        <span>
+                            <img src="/images/baseline-person-24px.svg" />
+                        </span>
+                    </div>
+                    <div class="col-sm-1">
+                        <span class="font-bold">
+                            @server.Value.Players
+                        </span>
+                    </div>
+                </div>
+            </a>
         </div>
-        <div class="row">
-            <div class="col-sm-8">
-                <span class="font-italic">
-                    @server.Key
-                </span>
-            </div>
-            <div class="col-sm-1">
-                <span>
-                    <img src="/images/baseline-person-24px.svg" />
-                </span>
-            </div>
-            <div class="col-sm-1">
-                <span class="font-bold">
-                    @server.Value.Players
-                </span>
-            </div>
-            <div class="col-sm-1">
-                <button type="submit" class="btn btn-default">
-                    Data
-                </button>
-            </div>
-        </div>
-        @*</a>*@
+
     </form>
 }
+
+<script>
+    $(".submit-link").click(function () {
+        $(this).closest("form").submit();
+    });
+</script>

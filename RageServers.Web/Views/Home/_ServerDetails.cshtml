@@ -1,31 +1,11 @@
 ﻿@model RageServers.Web.ViewModels.HomeDetailsViewModel
 
-<div class="card mt-5">
-    <div class="card-header">
-        <div class="row align-items-center">
-            <div class="col">
-                <h4>
-                    Customers
-                </h4>
-            </div>
-        </div>
-    </div>
-    <div class="card-body">
+
         @if (Model == null)
         {
-            <div class="row justify-content-center text-center">
-                <div class="col-12 col-md-10 mt-5">
-                    <i class="fa fa-user fa-5x mb-5"></i>
-                    <h2>
-                        No Customers
-                    </h2>
-                    <p class="text-muted">
-                        You do not have any customers yet. Add a new customer by clicking the <strong>Add Customer</strong> button below.
-                    </p>
-
-                    <a class="btn btn-lg btn-primary d-none d-md-inline-block mt-3" href="#">Add Customer</a>
-                </div>
-            </div> <!-- / .row -->
+            <div class="row">
+                <h1>Welcome!</h1>
+            </div>
         }
         else
         {
@@ -95,5 +75,3 @@
                 </table>
             </div>
         }
-    </div>
-</div>
