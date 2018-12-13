@@ -33,16 +33,6 @@ namespace RageServers.Web.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            //var peakList = new List<List<double>>();
-            //foreach (var peak in peakPlayers)
-            //{
-            //    peakList.Add(new List<double>
-            //    {
-            //        peak.Key.ToOADate(),
-            //        peak.Value
-            //    });
-            //}
-
             var model = new HomeDetailsViewModel
             {
                 PeakPlayers = peakPlayers,
