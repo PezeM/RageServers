@@ -7,3 +7,12 @@
     margin: 5px;
     padding: 15px;
 }
+
+.submit-link {
+    cursor: pointer;
+}
+
+.submit-link:hover {
+    color: #b22222 !important;
+    font-weight: bold;
+}
