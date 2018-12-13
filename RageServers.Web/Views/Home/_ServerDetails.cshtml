@@ -1,77 +1,123 @@
 ﻿@model RageServers.Web.ViewModels.HomeDetailsViewModel
 
 
-        @if (Model == null)
-        {
-            <div class="row">
-                <h1>Welcome!</h1>
-            </div>
-        }
-        else
-        {
-            <div>
-                <table>
-                    <tr>
-                        <td>
-                            IP:
-                        </td>
-                        <td>
-                            @Model.IP
-                        </td>
-                    </tr>
+@if (Model == null)
+{
+    <div class="row">
+        <h1>Welcome!</h1>
+    </div>
+}
+else
+{
+    <div>
+        <table>
+            <tr>
+                <td>
+                    IP:
+                </td>
+                <td>
+                    @Model.IP
+                </td>
+            </tr>
 
-                    <tr>
-                        <td>
-                            Gamemode:
-                        </td>
-                        <td>
-                            @Model.Gamemode
-                        </td>
-                    </tr>
+            <tr>
+                <td>
+                    Gamemode:
+                </td>
+                <td>
+                    @Model.Gamemode
+                </td>
+            </tr>
 
-                    <tr>
-                        <td>
-                            Language:
-                        </td>
-                        <td>
-                            @Model.Lang
-                        </td>
-                    </tr>
+            <tr>
+                <td>
+                    Language:
+                </td>
+                <td>
+                    @Model.Lang
+                </td>
+            </tr>
 
-                    <tr>
-                        <td>
-                            Current Players:
-                        </td>
-                        <td>
-                            @Model.CurrentPlayers
-                        </td>
-                    </tr>
+            <tr>
+                <td>
+                    Current Players:
+                </td>
+                <td>
+                    @Model.CurrentPlayers
+                </td>
+            </tr>
 
-                    <tr>
-                        <td>
-                            Slots:
-                        </td>
-                        <td>
-                            @Model.Slots
-                        </td>
-                    </tr>
+            <tr>
+                <td>
+                    Slots:
+                </td>
+                <td>
+                    @Model.Slots
+                </td>
+            </tr>
+        </table>
 
-                    <tr>
-                        <td><span class="font-weight-bold">Day</span></td>
-                        <td><span class="font-weight-bold">Peak</span></td>
-                    </tr>
+        <div id="chart">
+            <canvas id="server-peak-chart"></canvas>
+        </div>
 
-                    @foreach (var peakInfo in @Model.PeakPlayers)
-                    {
-                        <tr>
-                            <td>
-                                @peakInfo.Key.ToShortDateString()
-                            </td>
-                            <td>
-                                @peakInfo.Value
-                            </td>
-                        </tr>
+        <script>
+            var labels = @Html.Raw(Json.Serialize(Model.PeakPlayers.Keys.Select(q => q.ToShortDateString())));
+            var peakPlayers = @Html.Raw(Json.Serialize(Model.PeakPlayers.Values));
+
+            var ctx = document.getElementById("server-peak-chart");
+            var myLineChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: "Players peak",
+                            lineTension: 0.3,
+                            backgroundColor: "rgba(2,117,216,0.2)",
+                            borderColor: "rgba(2,117,216,1)",
+                            pointRadius: 5,
+                            pointBackgroundColor: "rgba(2,117,216,1)",
+                            pointBorderColor: "rgba(255,255,255,0.8)",
+                            pointHoverRadius: 5,
+                            pointHoverBackgroundColor: "rgba(2,117,216,1)",
+                            pointHitRadius: 50,
+                            pointBorderWidth: 2,
+                            data: peakPlayers,
+                        }
+                    ],
+                },
+                options: {
+                    scales: {
+                        xAxes: [{
+                            time: {
+                                unit: 'date'
+                            },
+                            gridLines: {
+                                display: false
+                            },
+                            ticks: {
+                                maxTicksLimit: 6
+                            },
+                            scaleLabel: {
+                                display: true,
+                                labelString: "Date",
+                            }
+                        }],
+                        yAxes: [{
+                            ticks: {
+                                min: 0,
+                                max: 1000,
+                                maxTicksLimit: 10
+                            },
+                        }],
+                    },
+                    legend: {
+                        display: true
                     }
-                </table>
-            </div>
-        }
+                }
+            });
+        </script>
+    </div>
+}
+

@@ -1,7 +1,9 @@
-﻿using System.Diagnostics;
+﻿using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using RageServers.Database.Service;
+using RageServers.Models;
 using RageServers.Web.Models;
 using RageServers.Web.ViewModels;
 
@@ -30,6 +32,16 @@ namespace RageServers.Web.Controllers
             {
                 return RedirectToAction(nameof(Index));
             }
+
+            //var peakList = new List<List<double>>();
+            //foreach (var peak in peakPlayers)
+            //{
+            //    peakList.Add(new List<double>
+            //    {
+            //        peak.Key.ToOADate(),
+            //        peak.Value
+            //    });
+            //}
 
             var model = new HomeDetailsViewModel
             {

@@ -9,6 +9,7 @@
 }
 
 .submit-link {
+    color: #007bff !important;
     cursor: pointer;
 }
 
