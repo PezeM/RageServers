@@ -10,6 +10,16 @@
 else
 {
     <div>
+        <div class="card mb-3">
+            <div class="card-header">
+                Players peak for @Model.IP
+            </div>
+            <div class="card-body">
+                <canvas id="server-peak-chart"></canvas>
+            </div>
+            <div class="card-footer small text-muted">Updated at @DateTime.Now</div>
+        </div>
+
         <table>
             <tr>
                 <td>
@@ -57,66 +67,67 @@ else
             </tr>
         </table>
 
-        <div id="chart">
-            <canvas id="server-peak-chart"></canvas>
-        </div>
-
         <script>
             var labels = @Html.Raw(Json.Serialize(Model.PeakPlayers.Keys.Select(q => q.ToShortDateString())));
             var peakPlayers = @Html.Raw(Json.Serialize(Model.PeakPlayers.Values));
 
             var ctx = document.getElementById("server-peak-chart");
-            var myLineChart = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: labels,
-                    datasets: [
-                        {
-                            label: "Players peak",
-                            lineTension: 0.3,
-                            backgroundColor: "rgba(2,117,216,0.2)",
-                            borderColor: "rgba(2,117,216,1)",
-                            pointRadius: 5,
-                            pointBackgroundColor: "rgba(2,117,216,1)",
-                            pointBorderColor: "rgba(255,255,255,0.8)",
-                            pointHoverRadius: 5,
-                            pointHoverBackgroundColor: "rgba(2,117,216,1)",
-                            pointHitRadius: 50,
-                            pointBorderWidth: 2,
-                            data: peakPlayers,
-                        }
-                    ],
-                },
-                options: {
-                    scales: {
-                        xAxes: [{
-                            time: {
-                                unit: 'date'
-                            },
-                            gridLines: {
-                                display: false
-                            },
-                            ticks: {
-                                maxTicksLimit: 6
-                            },
-                            scaleLabel: {
-                                display: true,
-                                labelString: "Date",
+            var myLineChart = new Chart(ctx,
+                {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: [
+                            {
+                                label: "Players peak",
+                                lineTension: 0.3,
+                                backgroundColor: "rgba(2,117,216,0.2)",
+                                borderColor: "rgba(2,117,216,1)",
+                                pointRadius: 5,
+                                pointBackgroundColor: "rgba(2,117,216,1)",
+                                pointBorderColor: "rgba(255,255,255,0.8)",
+                                pointHoverRadius: 5,
+                                pointHoverBackgroundColor: "rgba(2,117,216,1)",
+                                pointHitRadius: 50,
+                                pointBorderWidth: 2,
+                                data: peakPlayers,
                             }
-                        }],
-                        yAxes: [{
-                            ticks: {
-                                min: 0,
-                                max: 1000,
-                                maxTicksLimit: 10
-                            },
-                        }],
+                        ],
                     },
-                    legend: {
-                        display: true
+                    options: {
+                        scales: {
+                            xAxes: [
+                                {
+                                    time: {
+                                        unit: 'date'
+                                    },
+                                    gridLines: {
+                                        display: false
+                                    },
+                                    ticks: {
+                                        maxTicksLimit: 6
+                                    },
+                                    scaleLabel: {
+                                        display: true,
+                                        labelString: "Date",
+                                    }
+                                }
+                            ],
+                            yAxes: [
+                                {
+                                    ticks: {
+                                        min: 0,
+                                        max: 1000,
+                                        maxTicksLimit: 10
+                                    },
+                                }
+                            ],
+                        },
+                        legend: {
+                            display: true
+                        }
                     }
-                }
-            });
+                });
         </script>
     </div>
 }
